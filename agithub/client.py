@@ -8,6 +8,7 @@ class Client(object):
   http_methods = (
       'get',
       'post',
+      'delete',
       'put',
       )
 
@@ -27,6 +28,10 @@ class Client(object):
   def get(self, url, headers={}, **params):
     url += self.urlencode(params)
     return self.request('GET', url, None, headers)
+
+  def delete(self, url, headers={}, **params):
+    url += self.urlencode(params)
+    return self.request('DELETE', url, None, headers)
 
   def post(self, url, body=None, headers={}, **params):
     url += self.urlencode(params)
