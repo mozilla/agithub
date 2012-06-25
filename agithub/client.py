@@ -8,6 +8,7 @@ class Client(object):
   http_methods = (
       'get',
       'post',
+      'put',
       )
 
   def __init__(self, username=None, password=None, token=None):
@@ -30,6 +31,10 @@ class Client(object):
   def post(self, url, body=None, headers={}, **params):
     url += self.urlencode(params)
     return self.request('POST', url, json.dumps(body), headers)
+
+  def put(self, url, body=None, headers={}, **params):
+    url += self.urlencode(params)
+    return self.request('PUT', url, json.dumps(body), headers)
 
   def request(self, method, url, body, headers):
     if self.username:
