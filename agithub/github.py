@@ -1,7 +1,9 @@
 # Copyright 2012 Jonathan Paugh
 # See COPYING for license details
 import re
-from client import Client
+from functools import partial, update_wrapper
+
+from .client import Client
 
 class Github(object):
   '''The agnostic Github API. It doesn't know, and you don't care.
@@ -49,20 +51,13 @@ class RequestBuilder(object):
 
   def __getattr__(self, key):
     if key in ('get', 'post'):
-      return self.curry(getattr(self.client, key), self.url)
+      mfun = getattr(self.client, key)
+      fun = partial(mfun, url=self.url)
+      return update_wrapper(fun, mfun)
     self.url += '/' + str(key)
     return self
 
   __getitem__ = __getattr__
-
-  def curry(self, fun, url):
-    def f(*args, **kwargs):
-      try:
-        return fun(url, *args, **kwargs)
-      except Exception as e:
-        raise
-
-    return f
 
   def __str__(self):
     '''If you ever stringify this, you've (probably) messed up
