@@ -23,9 +23,9 @@ class Client(object):
       elif token is not None:
         self.auth_header = 'Token %s' % token
 
-  def get(self, url, body=None, headers={}, **params):
+  def get(self, url, headers={}, **params):
     url += self.urlencode(params)
-    return self.request('GET', url, body, headers)
+    return self.request('GET', url, None, headers)
 
   def post(self, url, body=None, headers={}, **params):
     url += self.urlencode(params)
