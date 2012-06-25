@@ -10,9 +10,18 @@ class Client(object):
       'post',
       )
 
-  def __init__(self, username=None, password=None):
-    self.username = username
-    self.password = password
+  def __init__(self, username=None, password=None, token=None):
+    if username is not None:
+      if password is None and token is None:
+        raise TypeError("You need a password to authenticate as " + username)
+      if password is not None and token is not None:
+        raise TypeError("You cannot use both password and oauth token authenication")
+      self.username = username
+
+      if password is not None:
+        self.auth_header = self.hash_pass(password)
+      elif token is not None:
+        self.auth_header = 'Token %s' % token
 
   def get(self, url, body=None, headers={}, **params):
     url += self.urlencode(params)
@@ -23,8 +32,8 @@ class Client(object):
     return self.request('POST', url, json.dumps(body), headers)
 
   def request(self, method, url, body, headers):
-    if self.password:
-      headers['Authorization'] = 'Basic ' + self.hash_pass()
+    if self.username:
+      headers['Authorization'] = self.auth_header
     print 'cli request:', method, url, body, headers
     #TODO: Context manager
     conn = self.get_connection()
@@ -42,8 +51,8 @@ class Client(object):
       return ''
     return '?' + urllib.urlencode(params)
 
-  def hash_pass(self):
-    return base64.b64encode('%s:%s' % (self.username, self.password)).strip()
+  def hash_pass(self, password):
+    return 'Basic ' + base64.b64encode('%s:%s' % (self.username, password)).strip()
 
   def get_connection(self):
     return httplib.HTTPSConnection('api.github.com')
