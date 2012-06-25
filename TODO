@@ -2,7 +2,6 @@
 - curry() accepts optional arguments which are curried later:
   fun = g.url.partial.get(*args, **kwargs);fun(*moreargs) or something
 - Implement 'Partial' Urls that can be added together, or pre/appended
-  to a regular one. (At that point, rename PartialAPICalls to something
-  less confusing.)
+  to a regular one.
 - Add patch/delete support, etc.
 - More robust header handling. Some things don't quite work.

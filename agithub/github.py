@@ -29,12 +29,12 @@ class Github(object):
   def __init__(self, *args, **kwargs):
     self.client = Client(*args, **kwargs)
   def __getattr__(self, key):
-    return PartialAPICall(self.client).__getattr__(key)
+    return RequestBuilder(self.client).__getattr__(key)
 
-class PartialAPICall(object):
-  '''PartialAPICall(client).path.to.resource.method(...)
+class RequestBuilder(object):
+  '''RequestBuilder(client).path.to.resource.method(...)
       stands for
-  UrlAttribute(client).client.method('path/to/resource, ...)
+  RequestBuilder(client).client.method('path/to/resource, ...)
 
   Also, if you use an invalid path, too bad. Just be ready to catch a
   You can use item access instead of attribute access. This is

@@ -28,8 +28,8 @@ understand how to do it with `agithub`, and get on with your life.
 >>> data
 [ list, of, issues ]
 >>> g.issues
-I don't know about /issues
->>> g.repos.jpaugh64.issues[1].get()
+<class 'agithub.github.RequestBuilder'>: I don't know about /issues
+>>> g.repos.jpaugh64.repla.issues[1].get()
 (200, { 'id': '#blah', ... })
 >>> mylogin, myrepo = 'jpaugh64', 'braille-converter'
 >>> g.repos[mylogin][myrepo]/milestones.get(state='open', sort='completeness')
@@ -80,13 +80,13 @@ anyway (i.e. some other way). Often, the body contains more information on what 
 There's also a third, tricky situation you can run into from time to
 time, which happens when you forget to append an http method to the
 path, i.e. the last attribute. When this occurs, you receive a
-PartialAPICall object, which doesn't do anything useful for you per se.
+RequestBuilder object, which doesn't do anything useful for you per se.
 In this case, `agithub` tries to be as helpful as possible, by reminding
 you that it doesn't know whenever you try to stringify it. (For example,
 at the Python interactive prompt.)
 
 This works out better if you don't forget the (), because then you get a
-`TypeError: 'PartialAPICall' object is not callable`.
+`TypeError: 'RequestBuilder' object is not callable`.
 
 ## Lies
 `agithub` is simpler than it needs to be. It doesn't handle certain
