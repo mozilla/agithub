@@ -32,10 +32,10 @@ understand how to do it with `agithub`, and get on with your life.
 >>> g.repos.jpaugh64.repla.issues[1].get()
 (200, { 'id': '#blah', ... })
 >>> mylogin, myrepo = 'jpaugh64', 'braille-converter'
->>> g.repos[mylogin][myrepo]/milestones.get(state='open', sort='completeness')
+>>> g.repos[mylogin][myrepo].milestones.get(state='open', sort='completeness')
 (200, [ list, of, milestones ])
->>> def following(g, user, repo):
-...   return g.user/following[user].get
+>>> def following(client, user):
+...   return client.user.following[user].get
 ...
 >>> callback = following('octocat')
 >>> if 204 == callback()[0]:
@@ -65,15 +65,15 @@ it's response. It's that simple.
 
 In short, `agithub` doesn't know about the Github API. But it fully
 supports it, so you don't care--usually. When you do care is when you
-get an error. There are 2 kinds of errors you can get: 
+get an error. There are 2 kinds of errors you can get:
 
-1. low-level http Exceptions (from `httplib`)
-    Can Happen when, for example, you're not connected to the internet.
-Catch these with `try..except` blocks, as usual.
+1. low-level http Exceptions (from `httplib`) Can Happen when, for example,
+   you're not connected to the internet.  Catch these with `try..except`
+blocks, as usual.
 
-2. Github API errors (returned through http status)
-   You'll need to check for these in the returned status, as you would
-anyway (i.e. some other way). Often, the body contains more information on what went wrong.
+2. Github API errors (returned through http status) You'll need to check for
+   these in the returned status, as you would anyway (i.e. some other way).
+Often, the body contains more information on what went wrong.
 
 ## Pitfall
 
@@ -90,7 +90,7 @@ This works out better if you don't forget the (), because then you get a
 
 ## Lies
 `agithub` is simpler than it needs to be. It doesn't handle certain
-things very well, such when it receives a tarball instead of a JSON. It
+things very well, such when it receives a tarball instead of JSON. It
 might also be nice if it gave you access to the mimetypes or other
 headers.
 
