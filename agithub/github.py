@@ -50,7 +50,7 @@ class RequestBuilder(object):
     self.url = ''
 
   def __getattr__(self, key):
-    if key in ('get', 'post'):
+    if key in self.client.http_methods:
       mfun = getattr(self.client, key)
       fun = partial(mfun, url=self.url)
       return update_wrapper(fun, mfun)

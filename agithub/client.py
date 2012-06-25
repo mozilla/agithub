@@ -5,6 +5,11 @@ import json
 import base64
 
 class Client(object):
+  http_methods = (
+      'get',
+      'post',
+      )
+
   def __init__(self, username=None, password=None, login=None):
     if username is None and login is not None:
       username = login
