@@ -4,4 +4,4 @@
 - Implement 'Partial' Urls that can be added together, or pre/appended
   to a regular one.
 - Add patch/delete support, etc.
-- More robust header handling. Some things don't quite work.
+- Implement support for passing headers

@@ -41,7 +41,10 @@ class Client(object):
     response = conn.getresponse()
     status = response.status
     body = response.read()
-    pybody = json.loads(body)
+    try:
+      pybody = json.loads(body)
+    except ValueError:
+      pybody = body
     print 'reponse len:', len(pybody)
     conn.close()
     return status, pybody
