@@ -1,8 +1,8 @@
 # The Agnostic Github API
 "It doesn't know, and you don't care!"
 
-`agithub` allows ready access to the Github v3 API without learning a
-new API! That's because its syntax is similar to HTTP (but much nicer).
+`agithub` is a RESTful API for github.com with a transparent syntax that
+allows rapid prototyping.
 
 For example:
 
