@@ -10,14 +10,7 @@ class Client(object):
       'post',
       )
 
-  def __init__(self, username=None, password=None, login=None):
-    if username is None and login is not None:
-      username = login
-    elif username is not None and login is not None:
-      raise ValueError(
-'''You cannot use both login and username. (They are mnemonics, so pick one.)''')
-    if password is None and username is not None:
-      raise TypeError("You need a password to authenticate as " + username)
+  def __init__(self, username=None, password=None):
     self.username = username
     self.password = password
 
