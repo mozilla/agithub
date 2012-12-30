@@ -18,12 +18,13 @@ class Client(object):
         raise TypeError("You need a password to authenticate as " + username)
       if password is not None and token is not None:
         raise TypeError("You cannot use both password and oauth token authenication")
-      self.username = username
 
       if password is not None:
         self.auth_header = self.hash_pass(password)
       elif token is not None:
         self.auth_header = 'Token %s' % token
+
+    self.username = username
 
   def get(self, url, headers={}, **params):
     url += self.urlencode(params)
