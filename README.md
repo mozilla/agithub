@@ -2,7 +2,8 @@
 "It doesn't know, and you don't care!"
 
 `agithub` is a RESTful API for github.com with a transparent syntax that
-allows rapid prototyping.
+allows rapid prototyping. It's code is very small, and easy to
+change/update/fix.
 
 For example:
 
@@ -89,13 +90,20 @@ This works out better if you don't forget the (), because then you get a
 `TypeError: 'RequestBuilder' object is not callable`.
 
 ## Lies
-`agithub` is simpler than it needs to be. It doesn't handle certain
+- `agithub` is simpler than it needs to be. It doesn't handle certain
 things very well, such when it receives a tarball instead of JSON. It
 might also be nice if it gave you access to the mimetypes or other
 headers.
 
-It doesn't support patch or delete yet. Just get and post. I'm workin'
-on it!
+- It doesn't support patch or delete.
+
+- It isn't actively maintained. Bugfixes only, and even then I may be
+  slow. However, I'm quite willing to pull any useful code you write.
+
+- It doesn't support Python 3. This should be quite easy to fix. Likely
+  only needs changing print statements, and how httplib is imported. If
+  you fix this, send me a pull request.
+
 
 ## License
 Copyright 2012 Jonathan Paugh
