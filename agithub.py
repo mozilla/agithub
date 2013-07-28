@@ -79,6 +79,7 @@ class Client(object):
 
   def __init__(self, username=None, password=None, token=None):
     if username is not None:
+      self.username = username
       if password is None and token is None:
         raise TypeError("You need a password to authenticate as " + username)
       if password is not None and token is not None:
@@ -88,8 +89,6 @@ class Client(object):
         self.auth_header = self.hash_pass(password)
       elif token is not None:
         self.auth_header = 'Token %s' % token
-
-    self.username = username
 
   def get(self, url, headers={}, **params):
     url += self.urlencode(params)
