@@ -109,8 +109,7 @@ class Client(object):
   def request(self, method, url, body, headers):
     if self.username:
         headers['Authorization'] = self.auth_header
-    else:
-        headers['User-Agent'] = 'agithub'
+    headers['User-Agent'] = 'agithub'
     print 'cli request:', method, url, body, headers
     #TODO: Context manager
     conn = self.get_connection()
