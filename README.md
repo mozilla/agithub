@@ -97,14 +97,6 @@ headers.
 
 - It doesn't support patch or delete.
 
-- It isn't actively maintained. Bugfixes only, and even then I may be
-  slow. However, I'm quite willing to pull any useful code you write.
-
-- It doesn't support Python 3. This should be quite easy to fix. Likely
-  only needs changing print statements, and how httplib is imported. If
-  you fix this, send me a pull request.
-
-
 ## License
 Copyright 2012 Jonathan Paugh
 See [COPYING][1] for license details
