@@ -38,14 +38,21 @@ class Github(object):
     return RequestBuilder(self.client).__getattr__(key)
 
 class RequestBuilder(object):
-  '''RequestBuilder(client).path.to.resource.method(...)
-      stands for
-  RequestBuilder(client).client.method('path/to/resource, ...)
+  '''RequestBuilders build HTTP requests via an HTTP-idiomatic notation,
+  or via "normal" method calls.
+
+  Specifically,
+  >>> RequestBuilder(client).path.to.resource.METHOD(...)
+  is equivalent to
+  >>> RequestBuilder(client).client.METHOD('path/to/resource, ...)
+  where METHOD is replaced by get, post, head, etc.
 
   Also, if you use an invalid path, too bad. Just be ready to catch a
-  You can use item access instead of attribute access. This is
-  convenient for using variables' values and required for numbers.
   bad status from github.com. (Or maybe an httplib.error...)
+
+  You can use item access instead of attribute access. This is
+  convenient for using variables\' values and required for numbers.
+  >>> Github('user','pass').whatever[1][x][y].post()
 
   To understand the method(...) calls, check out github.client.Client.
   '''
