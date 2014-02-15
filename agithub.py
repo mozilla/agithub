@@ -28,9 +28,9 @@ class Github(object):
 
   That's all there is to it. (blah.post() should work, too.)
 
-  NOTE: It is up to you to spell things correctly. Github doesn't even
-  try to validate the url you feed it. On the other hand, it
-  automatically supports the full API--so why should you care?
+  NOTE: It is up to you to spell things correctly. A Github object
+  doesn't even try to validate the url you feed it. On the other hand,
+  it automatically supports the full API--so why should you care?
   '''
   def __init__(self, *args, **kwargs):
     self.client = Client(*args, **kwargs)
