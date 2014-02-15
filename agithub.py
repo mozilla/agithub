@@ -121,7 +121,7 @@ class Client(object):
         if self.username:
                 headers['Authorization'] = self.auth_header
         headers['User-Agent'] = 'agithub'
-        print 'cli request:', method, url, body, headers
+        #print 'cli request:', method, url, body, headers
         #TODO: Context manager
         conn = self.get_connection()
         conn.request(method, url, body, headers)
@@ -132,7 +132,7 @@ class Client(object):
             pybody = json.loads(body)
         except ValueError:
             pybody = body
-        print 'reponse len:', len(pybody)
+        #print 'reponse len:', len(pybody)
         conn.close()
         return status, pybody
 
