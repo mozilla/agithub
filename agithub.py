@@ -1,10 +1,19 @@
 # Copyright 2012 Jonathan Paugh
 # See COPYING for license details
-import httplib, urllib
 import json
 import base64
 import re
 from functools import partial, update_wrapper
+
+import sys
+if sys.version_info[0:2] > (3,0):
+    import http.client
+    import urllib.parse
+else:
+    import httplib as http
+    http.client = http
+    import urllib as urllib
+    urllib.parse = urllib
 
 class Github(object):
     '''The agnostic Github API. It doesn't know, and you don't care.
@@ -148,7 +157,19 @@ class Client(object):
     def urlencode(self, params):
         if not params:
             return ''
-        return '?' + urllib.urlencode(params)
+        return '?' + urllib.parse.urlencode(params)
+
+    def get_charset(self, response):
+        ctype = response.getheader('Content-Type')
+
+        try:
+            start = 8 + ctype.index('charset=')
+            end = ctype.index(';', start)
+            charset = ctype[start:end].rstrip()
+        except:
+            charset = 'ISO-8859-1' #TODO
+
+        return charset
 
     def get_charset(self, response):
         ctype = response.getheader('Content-Type')
@@ -166,4 +187,4 @@ class Client(object):
         return 'Basic ' + base64.b64encode('%s:%s' % (self.username, password)).strip()
 
     def get_connection(self):
-        return httplib.HTTPSConnection('api.github.com')
+        return http.client.HTTPSConnection('api.github.com')
