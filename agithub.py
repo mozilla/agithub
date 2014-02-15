@@ -82,11 +82,11 @@ class RequestBuilder(object):
 
 class Client(object):
     http_methods = (
-            'get',
             'head',
+            'get',
             'post',
-            'delete',
             'put',
+            'delete',
             )
 
     def __init__(self, username=None, password=None, token=None):
@@ -102,17 +102,13 @@ class Client(object):
             elif token is not None:
                 self.auth_header = 'Token %s' % token
 
-    def get(self, url, headers={}, **params):
-        url += self.urlencode(params)
-        return self.request('GET', url, None, headers)
-
     def head(self, url, headers={}, **params):
         url += self.urlencode(params)
         return self.request('HEAD', url, None, headers)
 
-    def delete(self, url, headers={}, **params):
+    def get(self, url, headers={}, **params):
         url += self.urlencode(params)
-        return self.request('DELETE', url, None, headers)
+        return self.request('GET', url, None, headers)
 
     def post(self, url, body=None, headers={}, **params):
         url += self.urlencode(params)
@@ -122,7 +118,13 @@ class Client(object):
         url += self.urlencode(params)
         return self.request('PUT', url, json.dumps(body), headers)
 
+    def delete(self, url, headers={}, **params):
+        url += self.urlencode(params)
+        return self.request('DELETE', url, None, headers)
+
+
     def request(self, method, url, body, headers):
+        '''Low-level networking. All HTTP-method methods call this'''
         if self.username:
                 headers['Authorization'] = self.auth_header
         headers['User-Agent'] = 'agithub'
