@@ -30,9 +30,9 @@ understand how to do it with `agithub`, and get on with your life.
 [ list, of, issues ]
 >>> g.issues
 <class 'agithub.github.RequestBuilder'>: I don't know about /issues
->>> g.repos.jpaugh64.repla.issues[1].get()
+>>> g.repos.jpaugh.repla.issues[1].get()
 (200, { 'id': '#blah', ... })
->>> mylogin, myrepo = 'jpaugh64', 'braille-converter'
+>>> mylogin, myrepo = 'jpaugh', 'braille-converter'
 >>> g.repos[mylogin][myrepo].milestones.get(state='open', sort='completeness')
 (200, [ list, of, milestones ])
 >>> def following(client, user):
@@ -108,4 +108,4 @@ headers.
 ## License
 Copyright 2012 Jonathan Paugh
 See [COPYING][1] for license details
-[1]: https://github.com/jpaugh64/agithub/blob/master/COPYING
+[1]: https://github.com/jpaugh/agithub/blob/master/COPYING

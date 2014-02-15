@@ -13,12 +13,15 @@ class Github(object):
   >>> status, data = g.issues.get(filter='subscribed')
   >>> data
   ... [ list_, of, stuff ]
-  >>> status, data = g.repos.jpaugh64.repla.issues[1].get()
+
+  >>> status, data = g.repos.jpaugh.repla.issues[1].get()
   >>> data
   ... { 'dict': 'my issue data', }
-  >>> name, repo = 'jpaugh64', 'repla'
+
+  >>> name, repo = 'jpaugh', 'repla'
   >>> status, data = g.repos[name][repo].issues[1].get()
   ... same thing
+
   >>> status, data = g.funny.I.donna.remember.that.one.get()
   >>> status
   ... 404
