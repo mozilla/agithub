@@ -65,8 +65,9 @@ class RequestBuilder(object):
       mfun = getattr(self.client, key)
       fun = partial(mfun, url=self.url)
       return update_wrapper(fun, mfun)
-    self.url += '/' + str(key)
-    return self
+    else
+      self.url += '/' + str(key)
+      return self
 
   __getitem__ = __getattr__
 
