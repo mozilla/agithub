@@ -128,18 +128,20 @@ class Client(object):
         if self.username:
                 headers['Authorization'] = self.auth_header
         headers['User-Agent'] = 'agithub'
-        #print 'cli request:', method, url, body, headers
+
         #TODO: Context manager
         conn = self.get_connection()
         conn.request(method, url, body, headers)
         response = conn.getresponse()
         status = response.status
-        body = response.read()
+        charset = self.get_charset(response)
+        body = response.read().decode(charset)
+
         try:
             pybody = json.loads(body)
         except ValueError:
             pybody = body
-        #print 'reponse len:', len(pybody)
+
         conn.close()
         return status, pybody
 
@@ -147,6 +149,18 @@ class Client(object):
         if not params:
             return ''
         return '?' + urllib.urlencode(params)
+
+    def get_charset(self, response):
+        ctype = response.getheader('Content-Type')
+
+        try:
+            start = 8 + ctype.index('charset=')
+            end = ctype.index(';', start)
+            charset = ctype[start:end].rstrip()
+        except:
+            charset = 'ISO-8859-1' #TODO
+
+        return charset
 
     def hash_pass(self, password):
         return 'Basic ' + base64.b64encode('%s:%s' % (self.username, password)).strip()
