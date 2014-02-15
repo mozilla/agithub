@@ -78,7 +78,7 @@ class RequestBuilder(object):
     return "I don't know about " + self.url
 
   def __repr__(self):
-    return '%s: %s' % (self.__class__, self.__str__())
+    return '%s: %s' % (self.__class__, self.url)
 
 class Client(object):
   http_methods = (
