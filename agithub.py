@@ -89,8 +89,8 @@ class Client(object):
             )
 
     def __init__(self, username=None, password=None, token=None):
+        self.username = username
         if username is not None:
-            self.username = username
             if password is None and token is None:
                 raise TypeError("You need a password to authenticate as " + username)
             if password is not None and token is not None:
