@@ -1,4 +1,4 @@
-# Copyright 2012 Jonathan Paugh
+# Copyright 2012-2014 Jonathan Paugh
 # See COPYING for license details
 import json
 import base64

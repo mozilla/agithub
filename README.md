@@ -98,6 +98,6 @@ headers.
 - It doesn't support patch or delete.
 
 ## License
-Copyright 2012 Jonathan Paugh
+Copyright 2012-2014 Jonathan Paugh
 See [COPYING][1] for license details
 [1]: https://github.com/jpaugh/agithub/blob/master/COPYING
