@@ -83,6 +83,7 @@ class RequestBuilder(object):
 class Client(object):
     http_methods = (
             'get',
+            'head',
             'post',
             'delete',
             'put',
@@ -104,6 +105,10 @@ class Client(object):
     def get(self, url, headers={}, **params):
         url += self.urlencode(params)
         return self.request('GET', url, None, headers)
+
+    def head(self, url, headers={}, **params):
+        url += self.urlencode(params)
+        return self.request('HEAD', url, None, headers)
 
     def delete(self, url, headers={}, **params):
         url += self.urlencode(params)
