@@ -18,7 +18,11 @@ else:
 VERSION = [1,1]
 STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 
+# These headers are implicitly included in each request; however, each
+# can be explicitly overridden by the client code. (Used in Client
+# objects.)
 _default_headers = {
+      'user-agent': 'agithub/' + STR_VERSION
     }
 
 class Github(object):
@@ -153,7 +157,6 @@ class Client(object):
 
         if self.username:
                 headers['Authorization'] = self.auth_header
-        headers['User-Agent'] = 'agithub/' + STR_VERSION
 
         #TODO: Context manager
         conn = self.get_connection()
