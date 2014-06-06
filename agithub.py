@@ -15,6 +15,8 @@ else:
     import urllib as urllib
     urllib.parse = urllib
 
+VERSION = [1,0]
+
 class Github(object):
     '''The agnostic Github API. It doesn't know, and you don't care.
     >>> from agithub import Github
