@@ -1,5 +1,5 @@
 # The Agnostic Github API
-"It doesn't know, and you don't care!"
+*It doesn't know, and you don't care!*
 
 `agithub` is a RESTful API for github.com with a transparent syntax that
 allows rapid prototyping. It's code is very small, and easy to
@@ -47,12 +47,12 @@ You are following octocat
 ```
 
 ### Demonstrates
-- returns (status, body) tuple, where body is a Python object (JSON,
+- Returns (status, body) tuple, where body is a Python object (JSON,
   remember?)
 - Agnostic - It doesn't know what to do unless you tell it.
-- parameter expansion, url-encoded for you
-- how to use numbers (which can't be used as Python attribute names)
-- string indicies - so you can have variable paths
+- Parameter expansion, url-encoded for you
+- How to use numbers (which can't be used as Python attribute names)
+- String indicies - so you can have variable paths
 - Make the API call later--reverse callbacks! :-p
 - Error reporting: straight from Github
 
@@ -83,11 +83,11 @@ time, which happens when you forget to append an http method to the
 path, i.e. the last attribute. When this occurs, you receive a
 RequestBuilder object, which doesn't do anything useful for you per se.
 In this case, `agithub` tries to be as helpful as possible, by reminding
-you that it doesn't know whenever you try to stringify it. (For example,
+you that *it doesn't know* whenever you try to stringify it. (For example,
 at the Python interactive prompt.)
 
-This works out better if you don't forget the (), because then you get a
-`TypeError: 'RequestBuilder' object is not callable`.
+This works out even better if you don't forget the (), because then you
+get a `TypeError: 'RequestBuilder' object is not callable`.
 
 ## Lies
 - `agithub` is simpler than it needs to be. It doesn't handle certain
