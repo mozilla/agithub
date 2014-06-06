@@ -167,13 +167,8 @@ class Client(object):
         status = response.status
         content = Content(response)
 
-        try:
-            pybody = json.loads(content.body)
-        except ValueError:
-            pybody = content.body
-
         conn.close()
-        return status, pybody
+        return status, content.processBody()
 
     def _fix_headers(self, headers):
         # Convert header names to a uniform case
@@ -256,6 +251,19 @@ class Content(object):
         return self.mediatype.replace('-','_').replace('/','_')
 
 
+    ## media-type handlers
+
     def x_application_unknown(self):
         '''Handler for unknown media-types'''
         return self.body
+
+    def application_json(self):
+        '''Handler for application/json media-type'''
+        try:
+            pybody = json.loads(self.body)
+        except ValueError:
+            pybody = self.body
+
+        return pybody
+
+    # Insert new media-type handlers here
