@@ -156,7 +156,7 @@ class Client(object):
         headers = self._fix_headers(headers)
 
         if self.username:
-                headers['Authorization'] = self.auth_header
+            headers['authorization'] = self.auth_header
 
         #TODO: Context manager
         conn = self.get_connection()
