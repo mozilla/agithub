@@ -22,7 +22,9 @@ STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 # can be explicitly overridden by the client code. (Used in Client
 # objects.)
 _default_headers = {
+    #XXX: Header field names MUST be lowercase; this is not checked
       'user-agent': 'agithub/' + STR_VERSION
+    , 'accept' :    'application/vnd.github.v3+json'
     }
 
 class Github(object):
