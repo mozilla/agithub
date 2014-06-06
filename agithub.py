@@ -165,13 +165,12 @@ class Client(object):
         conn.request(method, url, body, headers)
         response = conn.getresponse()
         status = response.status
-        charset = self.get_charset(response)
-        body = response.read().decode(charset)
+        content = Content(response)
 
         try:
-            pybody = json.loads(body)
+            pybody = json.loads(content.body)
         except ValueError:
-            pybody = body
+            pybody = content.body
 
         conn.close()
         return status, pybody
@@ -194,32 +193,69 @@ class Client(object):
             return ''
         return '?' + urllib.parse.urlencode(params)
 
-    def get_charset(self, response):
-        ctype = response.getheader('Content-Type')
-
-        try:
-            start = 8 + ctype.index('charset=')
-            end = ctype.index(';', start)
-            charset = ctype[start:end].rstrip()
-        except:
-            charset = 'ISO-8859-1' #TODO
-
-        return charset
-
-    def get_charset(self, response):
-        ctype = response.getheader('Content-Type')
-
-        try:
-            start = 8 + ctype.index('charset=')
-            end = ctype.index(';', start)
-            charset = ctype[start:end].rstrip()
-        except:
-            charset = 'ISO-8859-1' #TODO
-
-        return charset
-
     def hash_pass(self, password):
         return 'Basic ' + base64.b64encode('%s:%s' % (self.username, password)).strip()
 
     def get_connection(self):
         return http.client.HTTPSConnection('api.github.com')
+
+class Content(object):
+    '''
+    Decode a response from the server, respecting the Content-Type field
+    '''
+    def __init__(self, response):
+        self.response = response
+        self.body = response.read()
+        (self.mediatype, self.encoding) = self.get_ctype()
+
+        self.decode_body()
+
+    def get_ctype(self):
+        '''Split the content-type field into mediatype and charset'''
+        ctype = self.response.getheader('Content-Type')
+
+        start = 0
+        end = 0
+        try:
+            end = ctype.index(';')
+            mediatype = ctype[:end]
+        except:
+            mediatype = 'x-application/unknown'
+
+        try:
+            start = 8 + ctype.index('charset=', end)
+            end = ctype.index(';', start)
+            charset = ctype[start:end].rstrip()
+        except:
+            charset = 'ISO-8859-1' #TODO
+
+        return (mediatype, charset)
+
+    def decode_body(self):
+        '''
+        Decode (and replace) self.body via the charset encoding
+        specified in the content-type header
+        '''
+        self.body = self.body.decode(self.encoding)
+
+
+    def processBody(self):
+        '''
+        Retrieve the body of the response, encoding it into a usuable
+        form based on the media-type (mime-type)
+        '''
+        handlerName = self.mangled_mtype()
+        handler = getattr(self,handlerName, self.x_application_unknown)
+        return handler()
+
+
+    def mangled_mtype(self):
+        '''
+        Mangle the media type into a suitable function name
+        '''
+        return self.mediatype.replace('-','_').replace('/','_')
+
+
+    def x_application_unknown(self):
+        '''Handler for unknown media-types'''
+        return self.body
