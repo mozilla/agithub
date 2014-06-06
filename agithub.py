@@ -18,6 +18,9 @@ else:
 VERSION = [1,1]
 STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 
+_default_headers = {
+    }
+
 class Github(object):
     '''The agnostic Github API. It doesn't know, and you don't care.
     >>> from agithub import Github
@@ -145,6 +148,9 @@ class Client(object):
 
     def request(self, method, url, body, headers):
         '''Low-level networking. All HTTP-method methods call this'''
+
+        headers = self._fix_headers(headers)
+
         if self.username:
                 headers['Authorization'] = self.auth_header
         headers['User-Agent'] = 'agithub/' + STR_VERSION
@@ -164,6 +170,19 @@ class Client(object):
 
         conn.close()
         return status, pybody
+
+    def _fix_headers(self, headers):
+        # Convert header names to a uniform case
+        tmp_dict = {}
+        for k,v in headers.items():
+            tmp_dict[k.lower()] = v
+        headers = tmp_dict
+
+        # Add default headers (if unspecified)
+        for k,v in _default_headers.items():
+            if k not in headers:
+                headers[k] = v
+        return headers
 
     def urlencode(self, params):
         if not params:
