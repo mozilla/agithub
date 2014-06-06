@@ -96,6 +96,7 @@ class Client(object):
             'post',
             'put',
             'delete',
+            'patch',
             )
 
     def __init__(self, username=None, password=None, token=None):
@@ -131,6 +132,13 @@ class Client(object):
         url += self.urlencode(params)
         return self.request('DELETE', url, None, headers)
 
+    def patch(self, url, body=None, headers={}, **params):
+        """
+        Do a http patch request on the given url with given body, headers and parameters
+        Parameters is a dictionary that will will be urlencoded
+        """
+        url += self.urlencode(params)
+        return self.request(self.PATCH, url, json.dumps(body), headers)
 
     def request(self, method, url, body, headers):
         '''Low-level networking. All HTTP-method methods call this'''
