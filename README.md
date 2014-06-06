@@ -95,8 +95,6 @@ things very well, such when it receives a tarball instead of JSON. It
 might also be nice if it gave you access to the mimetypes or other
 headers.
 
-- It doesn't support patch or delete.
-
 ## License
 Copyright 2012-2014 Jonathan Paugh
 See [COPYING][1] for license details
