@@ -16,6 +16,7 @@ else:
     urllib.parse = urllib
 
 VERSION = [1,0]
+STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 
 class Github(object):
     '''The agnostic Github API. It doesn't know, and you don't care.
@@ -146,7 +147,7 @@ class Client(object):
         '''Low-level networking. All HTTP-method methods call this'''
         if self.username:
                 headers['Authorization'] = self.auth_header
-        headers['User-Agent'] = 'agithub'
+        headers['User-Agent'] = 'agithub/' + STR_VERSION
 
         #TODO: Context manager
         conn = self.get_connection()
