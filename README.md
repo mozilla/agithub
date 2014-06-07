@@ -29,7 +29,7 @@ can read the docs and immediately know how to do the examples via
 ## Example App
 
 1. First, instantiate a `Github` object, passing it your username and
-   password, if an authenticated session is desired.
+   password if an authenticated session is desired.
 
    ```python
    >>> from agithub import Github
@@ -68,7 +68,7 @@ can read the docs and immediately know how to do the examples via
    (200, [ list, of, milestones ])
    ```
 
-4. As a weird quirk of the implementation, you may build a partial call
+5. As a weird quirk of the implementation, you may build a partial call
    to the upstream API, and use it later.
 
    ```python
@@ -81,10 +81,10 @@ can read the docs and immediately know how to do the examples via
    You are following octocat
    ```
 
-   You may find this useful&nbsp;&mdas; or not.
+   You may find this useful&nbsp;&mdash; or not.
 
-5. Finally, as promised, `agithub` knows nothing at all about the Github
-   API, it won't second-guess you.
+6. Finally, `agithub` knows nothing at all about the Github API, and it
+   won't second-guess you.
 
    ```python
    >>> g.funny.I.donna.remember.that.one.head()
