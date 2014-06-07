@@ -207,8 +207,6 @@ class Content(object):
         self.body = response.read()
         (self.mediatype, self.encoding) = self.get_ctype()
 
-        print(self.response.getheaders())
-
     def get_ctype(self):
         '''Split the content-type field into mediatype and charset'''
         ctype = self.response.getheader('Content-Type')
