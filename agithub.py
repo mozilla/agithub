@@ -203,7 +203,7 @@ class Content(object):
         self.body = response.read()
         (self.mediatype, self.encoding) = self.get_ctype()
 
-        self.decode_body()
+        print(self.response.getheaders())
 
     def get_ctype(self):
         '''Split the content-type field into mediatype and charset'''
@@ -259,6 +259,8 @@ class Content(object):
 
     def application_json(self):
         '''Handler for application/json media-type'''
+        self.decode_body()
+
         try:
             pybody = json.loads(self.body)
         except ValueError:
