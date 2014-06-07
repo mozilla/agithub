@@ -1,101 +1,173 @@
 # The Agnostic Github API
 *It doesn't know, and you don't care!*
 
-`agithub` is a RESTful API for github.com with a transparent syntax that
-allows rapid prototyping. It's code is very small, and easy to
-change/update/fix.
+`agithub` is a REST API client tailored to https://api.github.com, with
+a transparent syntax which facilitates rapid prototyping. It's code is
+lightweight: easy to understand, modify, and integrate. It's most
+salient feature is that it doesn't know the Github API&nbsp;&mdash; but
+that doesn't matter, since it fully supports it *anyway*.
 
-For example:
+While browsing the
+[API documentation](https://developer.github.com/v3/), you can convert
+the following
 
 ```http
 GET /issues/?filter=subscribed
 ```
 
-becomes
+into
 
 ```python
 g.issues.get(filter='subscribed')
 ```
 
-So, you can read https://developer.github.com/v3/, immediately
-understand how to do it with `agithub`, and get on with your life.
+and trust that `agithub` will do exactly what you tell it to. It doesn't
+second guess you, and it doesn't do anything behind your back. So, you
+can read the docs and immediately know how to do the examples via
+`agithub`&nbsp;&mdash; and get on with your life.
+
+## Example App
+
+1. First, instantiate a `Github` object, passing it your username and
+   password, if an authenticated session is desired.
+
+   ```python
+   >>> from agithub import Github
+   >>> g = Github('user', 'pass')
+   ```
+
+2. When you make a request, the status and response body are passed back
+   as a tuple.
+
+   ```python
+   >>> status, data = g.issues.get(filter='subscribed', foobar='llama')
+   >>> data
+   [ list, of, issues ]
+   ```
+
+   Notice the syntax here:
+   `<API-object>.<URL-path>.<request-method>(<GET-parameters>)`
+
+3. If you forget the request method, `agithub` will complain that you
+   haven't provided enough information to complete the request.
+
+   ```python
+   >>> g.issues
+   <class 'agithub.github.RequestBuilder'>: I don't know about /issues
+   ```
+
+4. Sometimes, it is inconvenient (or impossible) to refer to a URL as a
+   chain of attributes, so indexing syntax is provided as well. It
+   behaves exactly the same.
+
+   ```python
+   >>> g.repos.jpaugh.repla.issues[1].get()
+   (200, { 'id': '#blah', ... })
+   >>> mylogin, myrepo = 'jpaugh', 'braille-converter'
+   >>> g.repos[mylogin][myrepo].milestones.get(state='open', sort='completeness')
+   (200, [ list, of, milestones ])
+   ```
+
+4. As a weird quirk of the implementation, you may build a partial call
+   to the upstream API, and use it later.
+
+   ```python
+   >>> def following(self, user):
+   ...   return self.user.following[user].get
+   ...
+   >>> myCall = following(g, 'octocat')
+   >>> if 204 == myCall()[0]:
+   ...   print 'You are following octocat'
+   You are following octocat
+   ```
+
+   You may find this useful&nbsp;&mdas; or not.
+
+5. Finally, as promised, `agithub` knows nothing at all about the Github
+   API, it won't second-guess you.
+
+   ```python
+   >>> g.funny.I.donna.remember.that.one.head()
+   (404, {'message': 'Not Found'})
+   ```
+
+   The error message you get is directly from Github's API. This gives
+   you all of the information you need to survey the situation.
+
+## Error handling
+Errors are handled in the most transparent way possible: they are passed
+on to you for further scrutiny. There are two kinds of errors that can
+crop up:
+
+1. Networking Exceptions (from the `http` library). Catch these with
+   `try .. catch` blocks, as you otherwise would.
+
+2. Github API errors. These means you're doing something wrong with the
+   API, and they are always evident in the response's status. The API
+   considerately returns a helpful error message in the JSON body.
 
 
-## Sample App
-```python
->>> from agithub import Github
->>> g = Github('user', 'pass')
->>> status, data = g.issues.get(filter='subscribed', foobar='llama')
->>> data
-[ list, of, issues ]
->>> g.issues
-<class 'agithub.github.RequestBuilder'>: I don't know about /issues
->>> g.repos.jpaugh.repla.issues[1].get()
-(200, { 'id': '#blah', ... })
->>> mylogin, myrepo = 'jpaugh', 'braille-converter'
->>> g.repos[mylogin][myrepo].milestones.get(state='open', sort='completeness')
-(200, [ list, of, milestones ])
->>> def following(client, user):
-...   return client.user.following[user].get
-...
->>> callback = following('octocat')
->>> if 204 == callback()[0]:
-...   print 'You are following octocat'
-You are following octocat
->>> g.funny.I.donna.remember.that.one.get()
-(404, {'message': 'Not Found'})
-```
+## Semantics
+Here's how `agithub` works, under the hood:
 
-### Demonstrates
-- Returns (status, body) tuple, where body is a Python object (JSON,
-  remember?)
-- Agnostic - It doesn't know what to do unless you tell it.
-- Parameter expansion, url-encoded for you
-- How to use numbers (which can't be used as Python attribute names)
-- String indicies - so you can have variable paths
-- Make the API call later--reverse callbacks! :-p
-- Error reporting: straight from Github
+1. It translates a sequence of attribute look-ups into a URL; The
+   Python method you call at the end of the chain determines the
+   HTTP method to use for the request.
 
-## Paths
-That last example deserves some further explanation. At the moment,
-agithub doesn't check that the path you specify is actually a valid
-Github API call. (It also doesn't check whether the parameters are valid
-for a given path.) What it does is to take the path, method, and
-parameters that you specify and feed them up to Github, then read back
-it's response. It's that simple.
+2. The Python method also receives `name=value` arguments, which it
+   interprets as follows:
 
-In short, `agithub` doesn't know about the Github API. But it fully
-supports it, so you don't care--usually. When you do care is when you
-get an error. There are 2 kinds of errors you can get:
+##### `header=`
 
-1. low-level http Exceptions (from `httplib`) Can Happen when, for example,
-   you're not connected to the internet.  Catch these with `try..except`
-blocks, as usual.
+  You can include custom headers as a dictionary supplied to the
+  `headers=` argument. Some headers are provided by default (such as
+  User-Agent). If these occur in the supplied dictionary, they will be
+  overridden.
 
-2. Github API errors (returned through http status) You'll need to check for
-   these in the returned status, as you would anyway (i.e. some other way).
-Often, the body contains more information on what went wrong.
 
-## Pitfall
+##### `body=`
 
-There's also a third, tricky situation you can run into from time to
-time, which happens when you forget to append an http method to the
-path, i.e. the last attribute. When this occurs, you receive a
-RequestBuilder object, which doesn't do anything useful for you per se.
-In this case, `agithub` tries to be as helpful as possible, by reminding
-you that *it doesn't know* whenever you try to stringify it. (For example,
-at the Python interactive prompt.)
+  If you're using POST, PUT, or PATCH (`post()`, `put()`, and
+  `patch()`), then you should include the body as the `body=` argument.
+  The body is serialized to JSON before sending it out on the wire.
 
-This works out even better if you don't forget the (), because then you
-get a `TypeError: 'RequestBuilder' object is not callable`.
+##### GET Parameters
 
-## Lies
-- `agithub` is simpler than it needs to be. It doesn't handle certain
-things very well, such when it receives a tarball instead of JSON. It
-might also be nice if it gave you access to the mimetypes or other
-headers.
+  Any other arguments to the Python method become GET parameters, and
+  are tacked onto the end of the URL. They are, of course, url-encoded
+  for you.
+
+3. When the response is received, `agithub` looks at its content
+   type to determine how to handle it, possibly decoding it from the
+   given char-set to Python's Unicode representation, then converting to
+   an appropriate form, then passed to you along with the response
+   status code. (A JSON object is de-serialized into a Python object.)
+
+## Extensibility
+`agithub` has been written in an extensible way. You can easily:
+
+* Add new HTTP methods by extending the `Client` class with
+  new Python methods of the same name (and adding them to the
+  [`http_methods` list][1]).
+
+* Add new default headers to the [`_default_headers` dictionary][2].
+  Just make sure that the header names are lower case.
+
+* Add a new media-type (a.k.a. content-type a.k.a mime-type) by
+  inserting a new method into the [`Content` class][3], replacing
+  `'-'` and `'/'` with `'_'` in the name. That method will then be
+  responsible for converting the response body to a usable
+  form&nbsp;&mdash; and for calling `decode_body` to do char-set
+  conversion, if required.
+
+And if all else fails, you can strap in, and take 15 minutes to read and
+become an expert on the code. From there, anything's possible.
+
+[1]: https://github.com/jpaugh/agithub/blob/master/agithub.py#L105
+[2]: https://github.com/jpaugh/agithub/blob/master/agithub.py#L24
+[3]: https://github.com/jpaugh/agithub/blob/master/agithub.py#L255
 
 ## License
 Copyright 2012-2014 Jonathan Paugh
-See [COPYING][1] for license details
-[1]: https://github.com/jpaugh/agithub/blob/master/COPYING
+See [COPYING][LIC] for license details
+[LIC]: https://github.com/jpaugh/agithub/blob/master/COPYING
