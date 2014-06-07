@@ -57,6 +57,10 @@ class Github(object):
         self.client = Client(*args, **kwargs)
     def __getattr__(self, key):
         return RequestBuilder(self.client).__getattr__(key)
+    __getitem__ = __getattr__
+
+    def __repr__(self):
+        return RequestBuilder(self.client).__repr__()
 
 class RequestBuilder(object):
     '''RequestBuilders build HTTP requests via an HTTP-idiomatic notation,
