@@ -62,6 +62,9 @@ class Github(object):
     def __repr__(self):
         return RequestBuilder(self.client).__repr__()
 
+    def getheaders(self):
+        return self.client.headers
+
 class RequestBuilder(object):
     '''RequestBuilders build HTTP requests via an HTTP-idiomatic notation,
     or via "normal" method calls.
@@ -114,6 +117,8 @@ class Client(object):
             'delete',
             'patch',
             )
+
+    headers = None
 
     def __init__(self, username=None, password=None, token=None):
         self.username = username
@@ -171,6 +176,7 @@ class Client(object):
         response = conn.getresponse()
         status = response.status
         content = Content(response)
+        self.headers = response.getheaders()
 
         conn.close()
         return status, content.processBody()

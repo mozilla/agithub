@@ -94,6 +94,17 @@ can read the docs and immediately know how to do the examples via
    The error message you get is directly from Github's API. This gives
    you all of the information you need to survey the situation.
 
+7. If you need more information, the response headers of the previous
+   request are available via the `getheaders()` method.
+
+   ```python
+   >>> g.getheaders()
+   [('status', '404 Not Fount'),
+    ('x-ratelimit-remaining', '54'),
+    ...
+    ('server', 'GitHub.com')]
+   ```
+
 ## Error handling
 Errors are handled in the most transparent way possible: they are passed
 on to you for further scrutiny. There are two kinds of errors that can
