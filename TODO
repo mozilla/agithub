@@ -1,7 +1,5 @@
-- RequestBuilder objectss have a __call__ method that just does a get
+- RequestBuilder objects need a __call__ method that just does a head
 - curry() accepts optional arguments which are curried later:
   fun = g.url.partial.get(*args, **kwargs);fun(*moreargs) or something
 - Implement 'Partial' Urls that can be added together, or pre/appended
   to a regular one.
-- Add patch/delete support, etc.
-- Implement support for passing headers
