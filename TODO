@@ -3,5 +3,4 @@
   fun = g.url.partial.get(*args, **kwargs);fun(*moreargs) or something
 - Implement 'Partial' Urls that can be added together, or pre/appended
   to a regular one.
-- Add patch/delete support, etc.
 - Implement support for passing headers
