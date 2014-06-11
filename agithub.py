@@ -242,7 +242,7 @@ class Content(object):
         form based on the media-type (mime-type)
         '''
         handlerName = self.mangled_mtype()
-        handler = getattr(self,handlerName, self.x_application_unknown)
+        handler = getattr(self, handlerName, self.x_application_unknown)
         return handler()
 
 
