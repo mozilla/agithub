@@ -15,7 +15,7 @@ else:
     import urllib as urllib
     urllib.parse = urllib
 
-VERSION = [1,1]
+VERSION = [1,1,1]
 STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 
 class Github(object):
