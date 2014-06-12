@@ -223,8 +223,13 @@ class Client(object):
     def get_connection(self):
         if self.prop.secure_http:
             conn = http.client.HTTPSConnection(self.prop.api_url)
-        else:
+        elif self.username is None:
             conn = http.client.HTTPConnection(self.prop.api_url)
+        else:
+            raise ConnectionError('Refusing to authenticate over'
+                    ' non-secure  (HTTP) connection. To override, edit'
+                    ' the source'
+                    )
 
         return conn
 
