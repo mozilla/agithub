@@ -56,6 +56,7 @@ class Github(object):
     def __init__(self, *args, **kwargs):
         props = ConnectionProperties(
                     api_url = 'api.github.com',
+                    secure_http=True
                     )
 
         kwargs['connection_properties']=props # XXX Kludge
@@ -220,7 +221,12 @@ class Client(object):
         return 'Basic '.encode('utf-8') + base64.b64encode(auth_str).strip()
 
     def get_connection(self):
-        return http.client.HTTPSConnection(self.prop.api_url)
+        if self.prop.secure_http:
+            conn = http.client.HTTPSConnection(self.prop.api_url)
+        else:
+            conn = http.client.HTTPConnection(self.prop.api_url)
+
+        return conn
 
 class Content(object):
     '''
@@ -297,7 +303,7 @@ class Content(object):
     # Insert new media-type handlers here
 
 class ConnectionProperties(object):
-    __slots__ = ['api_url']
+    __slots__ = ['api_url', 'secure_http']
 
     def __init__(self, **props):
         # Initialize attribute slots
