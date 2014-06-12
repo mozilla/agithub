@@ -110,6 +110,7 @@ class Client(object):
             if password is not None and token is not None:
                 raise TypeError("You cannot use both password and oauth token authenication")
 
+            self.auth_header = None
             if password is not None:
                 self.auth_header = self.hash_pass(password)
             elif token is not None:
