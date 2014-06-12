@@ -99,6 +99,12 @@ class Basic (Test):
         self.setlabel('HEAD')
         return api.head()
 
+    def test_userRepos(self, api):
+        if not self.haveAuth(api):
+            return (Skip, ())
+
+        return api.user.repos.head()
+
 ##
 # Utility
 ###
