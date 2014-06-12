@@ -76,6 +76,13 @@ class Test(object):
         '''Print out a test label showing the result'''
         print (result + ':', self._the_testno, self._the_label)
 
+    def haveAuth(self, api):
+        username = getattr(api.client, 'username', NotImplemented)
+        if username == NotImplemented or username == None:
+            return False
+        else:
+            return True
+
 
 ##
 # Tests
