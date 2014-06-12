@@ -110,15 +110,15 @@ class Basic (Test):
 ###
 
 # Session initializers
-def initAnonymousSession():
-    return Github()
+def initAnonymousSession(klass):
+    return klass()
 
-def initAuthenticatedSession(**kwargs):
+def initAuthenticatedSession(klass, **kwargs):
     for k in kwargs:
         if k not in ['username', 'password', 'token']:
             raise ValueError('Invalid test parameter: ' + str(k))
 
-    return Github(**kwargs)
+    return klass(**kwargs)
 
 
 # UI
@@ -136,7 +136,7 @@ def yesno(ans):
 ###
 
 if __name__ == '__main__':
-    anonSession = initAnonymousSession()
+    anonSession = initAnonymousSession(Github)
     authSession = None
 
     ans = input(
@@ -148,7 +148,8 @@ if __name__ == '__main__':
         username = input('Username: ')
         password = input ('Password (plain text): ')
         authSession = initAuthenticatedSession(
-                username=username, password=password
+                  Github
+                , username=username, password=password
                 )
 
     tests = filter(lambda var: var.startswith('test_'), globals().copy())
