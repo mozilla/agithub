@@ -145,6 +145,12 @@ class Client(object):
         if self.prop.extra_headers is not None:
             _default_headers.update(self.prop.extra_headers)
 
+        # Enforce case restrictions on self.default_headers
+        tmp_dict = {}
+        for k,v in self.default_headers.items():
+            tmp_dict[k.lower()] = v
+        self.default_headers = tmp_dict
+
         # Set up authentication
         self.username = username
         if username is not None:
