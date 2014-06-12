@@ -141,15 +141,6 @@ class Client(object):
             raise TypeError ('You should not instantiate a Client '
                              ' object directly. Use the Github class'
                              ' instead')
-        self.prop = connection_properties
-        if self.prop.extra_headers is not None:
-            _default_headers.update(self.prop.extra_headers)
-
-        # Enforce case restrictions on self.default_headers
-        tmp_dict = {}
-        for k,v in self.default_headers.items():
-            tmp_dict[k.lower()] = v
-        self.default_headers = tmp_dict
 
         # Set up authentication
         self.username = username
@@ -164,6 +155,26 @@ class Client(object):
                 self.auth_header = self.hash_pass(password)
             elif token is not None:
                 self.auth_header = 'Token %s' % token
+
+    def setConnectionProperties(self, props):
+        '''
+        Initialize the connection properties. This must be called
+        (either by passing connection_properties=... to __init__ or
+        directly) before any request can be sent.
+        '''
+        if type(props) is not ConnectionProperties:
+            raise TypeError("Client.setConnectionProperties: Expected ConnectionProperties object")
+
+        self.prop = props
+        if self.prop.extra_headers is not None:
+            self.default_headers = _default_headers.copy()
+            self.default_headers.update(self.prop.extra_headers)
+
+        # Enforce case restrictions on self.default_headers
+        tmp_dict = {}
+        for k,v in self.default_headers.items():
+            tmp_dict[k.lower()] = v
+        self.default_headers = tmp_dict
 
     def head(self, url, headers={}, **params):
         url += self.urlencode(params)
@@ -220,7 +231,7 @@ class Client(object):
         headers = tmp_dict
 
         # Add default headers (if unspecified)
-        for k,v in _default_headers.items():
+        for k,v in self.default_headers.items():
             if k not in headers:
                 headers[k] = v
         return headers
