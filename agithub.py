@@ -24,7 +24,6 @@ STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 _default_headers = {
     #XXX: Header field names MUST be lowercase; this is not checked
       'user-agent': 'agithub/' + STR_VERSION
-    , 'accept' :    'application/vnd.github.v3+json'
     }
 
 class Github(object):
@@ -56,7 +55,10 @@ class Github(object):
     def __init__(self, *args, **kwargs):
         props = ConnectionProperties(
                     api_url = 'api.github.com',
-                    secure_http=True
+                    secure_http = True,
+                    extra_headers = {
+                        'accept' :    'application/vnd.github.v3+json'
+                        }
                     )
 
         kwargs['connection_properties']=props # XXX Kludge
@@ -126,6 +128,7 @@ class Client(object):
             'patch',
             )
 
+    default_headers = {}
     headers = None
 
     def __init__(self, username=None,
@@ -133,11 +136,16 @@ class Client(object):
             connection_properties=None
             ):
 
+        # Set up connection properties
         if connection_properties is None:
             raise TypeError ('You should not instantiate a Client '
                              ' object directly. Use the Github class'
                              ' instead')
         self.prop = connection_properties
+        if self.prop.extra_headers is not None:
+            _default_headers.update(self.prop.extra_headers)
+
+        # Set up authentication
         self.username = username
         if username is not None:
             if password is None and token is None:
@@ -308,7 +316,7 @@ class Content(object):
     # Insert new media-type handlers here
 
 class ConnectionProperties(object):
-    __slots__ = ['api_url', 'secure_http']
+    __slots__ = ['api_url', 'secure_http', 'extra_headers']
 
     def __init__(self, **props):
         # Initialize attribute slots
