@@ -61,8 +61,8 @@ class Github(object):
                         }
                     )
 
-        kwargs['connection_properties']=props # XXX Kludge
         self.client = Client(*args, **kwargs)
+        self.client.setConnectionProperties(props)
 
 
     def __getattr__(self, key):
@@ -137,10 +137,8 @@ class Client(object):
             ):
 
         # Set up connection properties
-        if connection_properties is None:
-            raise TypeError ('You should not instantiate a Client '
-                             ' object directly. Use the Github class'
-                             ' instead')
+        if connection_properties is not None:
+            self.setConnectionProperties(connection_properties)
 
         # Set up authentication
         self.username = username
