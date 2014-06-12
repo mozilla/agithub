@@ -54,7 +54,14 @@ class Github(object):
     it automatically supports the full API--so why should you care?
     '''
     def __init__(self, *args, **kwargs):
+        props = ConnectionProperties(
+                    api_url = 'api.github.com',
+                    )
+
+        kwargs['connection_properties']=props # XXX Kludge
         self.client = Client(*args, **kwargs)
+
+
     def __getattr__(self, key):
         return RequestBuilder(self.client).__getattr__(key)
     __getitem__ = __getattr__
@@ -120,7 +127,16 @@ class Client(object):
 
     headers = None
 
-    def __init__(self, username=None, password=None, token=None):
+    def __init__(self, username=None,
+            password=None, token=None,
+            connection_properties=None
+            ):
+
+        if connection_properties is None:
+            raise TypeError ('You should not instantiate a Client '
+                             ' object directly. Use the Github class'
+                             ' instead')
+        self.prop = connection_properties
         self.username = username
         if username is not None:
             if password is None and token is None:
@@ -204,7 +220,7 @@ class Client(object):
         return 'Basic '.encode('utf-8') + base64.b64encode(auth_str).strip()
 
     def get_connection(self):
-        return http.client.HTTPSConnection('api.github.com')
+        return http.client.HTTPSConnection(self.prop.api_url)
 
 class Content(object):
     '''
@@ -279,3 +295,18 @@ class Content(object):
         return pybody
 
     # Insert new media-type handlers here
+
+class ConnectionProperties(object):
+    __slots__ = ['api_url']
+
+    def __init__(self, **props):
+        # Initialize attribute slots
+        for key in self.__slots__:
+            setattr(self, key, None)
+
+        # Fill attribute slots with custom values
+        for key, val in props.items():
+            if key not in ConnectionProperties.__slots__:
+                raise TypeError("Invalid connection property: " + str(key))
+            else:
+                setattr(self, key, val)
