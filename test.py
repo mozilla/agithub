@@ -56,7 +56,9 @@ class Test(object):
 
         global Pass, Skip, Fail
 
-        if stat < 400:
+        if stat in [Pass, Fail, Skip]:
+            return stat
+        elif stat < 400:
             result =  Pass
         elif stat >= 500:
             result = Skip
