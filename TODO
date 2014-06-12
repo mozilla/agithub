@@ -6,3 +6,5 @@
 
 * Support request/response compression
     See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/quickstart.htm
+
+- XML support
