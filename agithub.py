@@ -193,7 +193,8 @@ class Client(object):
         return '?' + urllib.parse.urlencode(params)
 
     def hash_pass(self, password):
-        return 'Basic ' + base64.b64encode('%s:%s' % (self.username, password)).strip()
+        auth_str = ('%s:%s' % (self.username, password)).encode('utf-8')
+        return 'Basic '.encode('utf-8') + base64.b64encode(auth_str).strip()
 
     def get_connection(self):
         return http.client.HTTPSConnection('api.github.com')
