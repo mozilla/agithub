@@ -3,3 +3,6 @@
   fun = g.url.partial.get(*args, **kwargs);fun(*moreargs) or something
 - Implement 'Partial' Urls that can be added together, or pre/appended
   to a regular one.
+
+* Support request/response compression
+    See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/quickstart.htm
