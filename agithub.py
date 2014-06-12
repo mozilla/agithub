@@ -26,7 +26,37 @@ _default_headers = {
       'user-agent': 'agithub/' + STR_VERSION
     }
 
-class Github(object):
+class API(object):
+    '''
+    The toplevel object, and the "entry-point" into the client API.
+    Subclass this to develop an application for a particular REST API.
+
+    Model your __init__ after the Github example.
+    '''
+    def __init__(self, *args, **kwargs):
+        raise Exception (
+                'Please subclass API and override __init__()  to'
+                'provide a ConnectionProperties object. See the Github'
+                ' class for an example'
+                )
+
+    def setClient(self, client):
+        self.client = client
+
+    def setConnectionProperties(self, props):
+        self.client.setConnectionProperties(props)
+
+    def __getattr__(self, key):
+        return RequestBuilder(self.client).__getattr__(key)
+    __getitem__ = __getattr__
+
+    def __repr__(self):
+        return RequestBuilder(self.client).__repr__()
+
+    def getheaders(self):
+        return self.client.headers
+
+class Github(API):
     '''The agnostic Github API. It doesn't know, and you don't care.
     >>> from agithub import Github
     >>> g = Github('user', 'pass')
@@ -61,19 +91,8 @@ class Github(object):
                         }
                     )
 
-        self.client = Client(*args, **kwargs)
-        self.client.setConnectionProperties(props)
-
-
-    def __getattr__(self, key):
-        return RequestBuilder(self.client).__getattr__(key)
-    __getitem__ = __getattr__
-
-    def __repr__(self):
-        return RequestBuilder(self.client).__repr__()
-
-    def getheaders(self):
-        return self.client.headers
+        self.setClient(Client(*args, **kwargs))
+        self.setConnectionProperties(props)
 
 class RequestBuilder(object):
     '''RequestBuilders build HTTP requests via an HTTP-idiomatic notation,
