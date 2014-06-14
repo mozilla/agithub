@@ -347,6 +347,10 @@ class Content(object):
 
         return pybody
 
+    text_javascript = application_json
+    # XXX: This isn't technically correct, but we'll hope for the best.
+    # Patches welcome!
+
     # Insert new media-type handlers here
 
 class ConnectionProperties(object):
