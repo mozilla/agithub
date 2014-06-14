@@ -23,18 +23,6 @@ Upcoming
 Unscheduled
 -----------
 
-* Support encoding/serialization request bodies, analogous to the
-  decoding/de-serialization for response bodies which is done in the
-  Content class
-
-    - This probably means reorganizing the Content class, perhaps adding
-      another level of structure
-    - Find a convenient way for the user to specify request-body
-      content-type. Maybe add a `content_type=` parameter to `put()` et
-      al?
-
-    - Does GitHub support this? It should. And if so, we should use it
-      by default
 
 * Create a script to pack the basic module and any given set of
   service-specific classes as one file
@@ -87,6 +75,19 @@ v2.0
 
 * Support XML de-serialization. Python has (I think) built-in support
   for this
+
+* Support encoding/serialization request bodies, analogous to the
+  decoding/de-serialization for response bodies which is done in the
+  Content class
+
+    - This probably means reorganizing the Content class, perhaps adding
+      another level of structure
+    - Find a convenient way for the user to specify request-body
+      content-type. Maybe add a `content_type=` parameter to `put()` et
+      al?
+
+    - Does GitHub support this? It should. And if so, we should use it
+      by default
 
 v1.1.1
 ------
