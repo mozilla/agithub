@@ -99,7 +99,7 @@ can read the docs and immediately know how to do the examples via
 
    ```python
    >>> g.getheaders()
-   [('status', '404 Not Fount'),
+   [('status', '404 Not Found'),
     ('x-ratelimit-remaining', '54'),
     ...
     ('server', 'GitHub.com')]
@@ -179,6 +179,6 @@ become an expert on the code. From there, anything's possible.
 [3]: https://github.com/jpaugh/agithub/blob/master/agithub.py#L255
 
 ## License
-Copyright 2012-2014 Jonathan Paugh
+Copyright 2012&ndash;2014 Jonathan Paugh
 See [COPYING][LIC] for license details
 [LIC]: https://github.com/jpaugh/agithub/blob/master/COPYING
