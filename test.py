@@ -1,5 +1,5 @@
 from __future__ import print_function
-from agithub import Github
+from agithub import GitHub
 
 ##
 # Test harness
@@ -136,7 +136,7 @@ def yesno(ans):
 ###
 
 if __name__ == '__main__':
-    anonSession = initAnonymousSession(Github)
+    anonSession = initAnonymousSession(GitHub)
     authSession = None
 
     ans = input(
@@ -148,7 +148,7 @@ if __name__ == '__main__':
         username = input('Username: ')
         password = input ('Password (plain text): ')
         authSession = initAuthenticatedSession(
-                  Github
+                  GitHub
                 , username=username, password=password
                 )
 

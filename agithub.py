@@ -31,12 +31,12 @@ class API(object):
     The toplevel object, and the "entry-point" into the client API.
     Subclass this to develop an application for a particular REST API.
 
-    Model your __init__ after the Github example.
+    Model your __init__ after the GitHub example.
     '''
     def __init__(self, *args, **kwargs):
         raise Exception (
                 'Please subclass API and override __init__()  to'
-                'provide a ConnectionProperties object. See the Github'
+                'provide a ConnectionProperties object. See the GitHub'
                 ' class for an example'
                 )
 
@@ -56,10 +56,10 @@ class API(object):
     def getheaders(self):
         return self.client.headers
 
-class Github(API):
-    '''The agnostic Github API. It doesn't know, and you don't care.
-    >>> from agithub import Github
-    >>> g = Github('user', 'pass')
+class GitHub(API):
+    '''The agnostic GitHub API. It doesn't know, and you don't care.
+    >>> from agithub import GitHub
+    >>> g = GitHub('user', 'pass')
     >>> status, data = g.issues.get(filter='subscribed')
     >>> data
     ... [ list_, of, stuff ]
@@ -78,7 +78,7 @@ class Github(API):
 
     That's all there is to it. (blah.post() should work, too.)
 
-    NOTE: It is up to you to spell things correctly. A Github object
+    NOTE: It is up to you to spell things correctly. A GitHub object
     doesn't even try to validate the url you feed it. On the other hand,
     it automatically supports the full API--so why should you care?
     '''
@@ -109,7 +109,7 @@ class RequestBuilder(object):
 
     You can use item access instead of attribute access. This is
     convenient for using variables\' values and required for numbers.
-    >>> Github('user','pass').whatever[1][x][y].post()
+    >>> GitHub('user','pass').whatever[1][x][y].post()
 
     To understand the method(...) calls, check out github.client.Client.
     '''
