@@ -230,11 +230,11 @@ class Client(object):
         conn.request(method, url, body, headers)
         response = conn.getresponse()
         status = response.status
-        content = Content(response)
+        resBody = ResponseBody(response)
         self.headers = response.getheaders()
 
         conn.close()
-        return status, content.processBody()
+        return status, resBody.process()
 
     def caseConvertHeaders(self, headers):
         # Convert header names to a uniform case
@@ -273,7 +273,7 @@ class Client(object):
 
         return conn
 
-class Content(object):
+class ResponseBody(object):
     '''
     Decode a response from the server, respecting the Content-Type field
     '''
@@ -311,7 +311,7 @@ class Content(object):
         self.body = self.body.decode(self.encoding)
 
 
-    def processBody(self):
+    def process(self):
         '''
         Retrieve the body of the response, encoding it into a usuable
         form based on the media-type (mime-type)
