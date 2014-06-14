@@ -22,7 +22,6 @@ STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 # can be explicitly overridden by the client code. (Used in Client
 # objects.)
 DEFAULT_HEADERS = {
-    #XXX: Header field names MUST be lowercase; this is not checked
       'user-agent': 'agithub/' + STR_VERSION
     }
 
@@ -188,10 +187,7 @@ class Client(object):
             self.defaultHeaders.update(self.prop.extra_headers)
 
         # Enforce case restrictions on self.defaultHeaders
-        tmpDict = {}
-        for k,v in self.defaultHeaders.items():
-            tmpDict[k.lower()] = v
-        self.defaultHeaders = tmpDict
+        self.defaultHeaders = self.caseConvertHeaders(self.defaultHeaders)
 
     def head(self, url, headers={}, **params):
         url += self.urlEncode(params)
@@ -224,7 +220,7 @@ class Client(object):
     def request(self, method, url, body, headers):
         '''Low-level networking. All HTTP-method methods call this'''
 
-        headers = self.caseConvertHeaders(headers)
+        headers = self.updateWithDefaultHeaders(headers)
 
         if self.username:
             headers['authorization'] = self.authHeader
@@ -245,9 +241,11 @@ class Client(object):
         tmpDict = {}
         for k,v in headers.items():
             tmpDict[k.lower()] = v
-        headers = tmpDict
+        return tmpDict
 
-        # Add default headers (if unspecified)
+    def updateWithDefaultHeaders(self, headers):
+        # Add default headers (if absent)
+        headers = self.caseConvertHeaders(headers)
         for k,v in self.defaultHeaders.items():
             if k not in headers:
                 headers[k] = v
