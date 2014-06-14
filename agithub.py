@@ -199,11 +199,11 @@ class Client(object):
 
     def post(self, url, body=None, headers={}, **params):
         url += self.urlEncode(params)
-        return self.request('POST', url, json.dumps(body), headers)
+        return self.request('POST', url, body, headers)
 
     def put(self, url, body=None, headers={}, **params):
         url += self.urlEncode(params)
-        return self.request('PUT', url, json.dumps(body), headers)
+        return self.request('PUT', url, body, headers)
 
     def delete(self, url, headers={}, **params):
         url += self.urlEncode(params)
@@ -215,7 +215,7 @@ class Client(object):
         Parameters is a dictionary that will will be url-encoded
         """
         url += self.urlEncode(params)
-        return self.request(self.PATCH, url, json.dumps(body), headers)
+        return self.request(self.PATCH, url, body, headers)
 
     def request(self, method, url, body, headers):
         '''Low-level networking. All HTTP-method methods call this'''
@@ -225,9 +225,9 @@ class Client(object):
         if self.username:
             headers['authorization'] = self.authHeader
 
-        #TODO: Context manager
+        reqBody = RequestBody(body, headers)
         conn = self.getConnection()
-        conn.request(method, url, body, headers)
+        conn.request(method, url, reqBody.process(), headers)
         response = conn.getresponse()
         status = response.status
         resBody = ResponseBody(response)
@@ -382,6 +382,59 @@ class ResponseBody(Body):
     # Patches welcome!
 
     # Insert new media-type handlers here
+
+class RequestBody(Body):
+    '''
+    Encode a request body from the client, respecting the Content-Type
+    field
+    '''
+    def __init__(self, body, headers):
+        self.body = body
+        self.headers = headers
+        self.parseContentType(
+                getattr(self.headers, 'content-type', None)
+                )
+        self.encoding = self.ctypeParameters['charset']
+
+    def encodeBody(self):
+        '''
+        Encode (and overwrite) self.body via the charset encoding
+        specified in the request headers
+        '''
+        self.body = self.body.encode(self.encoding)
+
+    def process(self):
+        '''
+        Process the request body by applying a media-type specific
+        handler to it. Some media-types need charset encoding as well,
+        and it is up to the handler to do this by calling
+        self.encodeBody()
+        '''
+        if self.body is None:
+            return None
+
+        handlerName = self.funMangledMediaType()
+        handler = getattr(  self, handlerName,
+                            self.application_octet_stream
+                            )
+        return handler()
+
+    ## media-type handlers
+
+    def application_octet_stream(self):
+        '''Handler for binary data and unknown media-types. Importantly,
+        it does absolutely no pre-processing of the body, which means it
+        will not mess it up.
+        '''
+        return self.body
+
+    def application_json(self):
+        self.body = json.dumps(self.body)
+        self.encodeBody()
+        return self.body
+
+    # Insert new Request media-type handlers here
+
 
 class ConnectionProperties(object):
     __slots__ = ['api_url', 'secure_http', 'extra_headers']
