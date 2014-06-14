@@ -21,7 +21,7 @@ STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 # These headers are implicitly included in each request; however, each
 # can be explicitly overridden by the client code. (Used in Client
 # objects.)
-_default_headers = {
+DEFAULT_HEADERS = {
     #XXX: Header field names MUST be lowercase; this is not checked
       'user-agent': 'agithub/' + STR_VERSION
     }
@@ -118,7 +118,7 @@ class RequestBuilder(object):
         self.url = ''
 
     def __getattr__(self, key):
-        if key in self.client.http_methods:
+        if key in self.client.httpMethods:
             mfun = getattr(self.client, key)
             fun = partial(mfun, url=self.url)
             return update_wrapper(fun, mfun)
@@ -138,7 +138,7 @@ class RequestBuilder(object):
         return '%s: %s' % (self.__class__, self.url)
 
 class Client(object):
-    http_methods = (
+    httpMethods = (
             'head',
             'get',
             'post',
@@ -147,7 +147,7 @@ class Client(object):
             'patch',
             )
 
-    default_headers = {}
+    defaultHeaders = {}
     headers = None
 
     def __init__(self, username=None,
@@ -167,11 +167,11 @@ class Client(object):
             if password is not None and token is not None:
                 raise TypeError("You cannot use both password and oauth token authenication")
 
-            self.auth_header = None
+            self.authHeader = None
             if password is not None:
-                self.auth_header = self.hash_pass(password)
+                self.authHeader = self.hashPassword(password)
             elif token is not None:
-                self.auth_header = 'Token %s' % token
+                self.authHeader = 'Token %s' % token
 
     def setConnectionProperties(self, props):
         '''
@@ -184,33 +184,33 @@ class Client(object):
 
         self.prop = props
         if self.prop.extra_headers is not None:
-            self.default_headers = _default_headers.copy()
-            self.default_headers.update(self.prop.extra_headers)
+            self.defaultHeaders = DEFAULT_HEADERS.copy()
+            self.defaultHeaders.update(self.prop.extra_headers)
 
-        # Enforce case restrictions on self.default_headers
-        tmp_dict = {}
-        for k,v in self.default_headers.items():
-            tmp_dict[k.lower()] = v
-        self.default_headers = tmp_dict
+        # Enforce case restrictions on self.defaultHeaders
+        tmpDict = {}
+        for k,v in self.defaultHeaders.items():
+            tmpDict[k.lower()] = v
+        self.defaultHeaders = tmpDict
 
     def head(self, url, headers={}, **params):
-        url += self.urlencode(params)
+        url += self.urlEncode(params)
         return self.request('HEAD', url, None, headers)
 
     def get(self, url, headers={}, **params):
-        url += self.urlencode(params)
+        url += self.urlEncode(params)
         return self.request('GET', url, None, headers)
 
     def post(self, url, body=None, headers={}, **params):
-        url += self.urlencode(params)
+        url += self.urlEncode(params)
         return self.request('POST', url, json.dumps(body), headers)
 
     def put(self, url, body=None, headers={}, **params):
-        url += self.urlencode(params)
+        url += self.urlEncode(params)
         return self.request('PUT', url, json.dumps(body), headers)
 
     def delete(self, url, headers={}, **params):
-        url += self.urlencode(params)
+        url += self.urlEncode(params)
         return self.request('DELETE', url, None, headers)
 
     def patch(self, url, body=None, headers={}, **params):
@@ -218,19 +218,19 @@ class Client(object):
         Do a http patch request on the given url with given body, headers and parameters
         Parameters is a dictionary that will will be urlencoded
         """
-        url += self.urlencode(params)
+        url += self.urlEncode(params)
         return self.request(self.PATCH, url, json.dumps(body), headers)
 
     def request(self, method, url, body, headers):
         '''Low-level networking. All HTTP-method methods call this'''
 
-        headers = self._fix_headers(headers)
+        headers = self.caseConvertHeaders(headers)
 
         if self.username:
-            headers['authorization'] = self.auth_header
+            headers['authorization'] = self.authHeader
 
         #TODO: Context manager
-        conn = self.get_connection()
+        conn = self.getConnection()
         conn.request(method, url, body, headers)
         response = conn.getresponse()
         status = response.status
@@ -240,29 +240,29 @@ class Client(object):
         conn.close()
         return status, content.processBody()
 
-    def _fix_headers(self, headers):
+    def caseConvertHeaders(self, headers):
         # Convert header names to a uniform case
-        tmp_dict = {}
+        tmpDict = {}
         for k,v in headers.items():
-            tmp_dict[k.lower()] = v
-        headers = tmp_dict
+            tmpDict[k.lower()] = v
+        headers = tmpDict
 
         # Add default headers (if unspecified)
-        for k,v in self.default_headers.items():
+        for k,v in self.defaultHeaders.items():
             if k not in headers:
                 headers[k] = v
         return headers
 
-    def urlencode(self, params):
+    def urlEncode(self, params):
         if not params:
             return ''
-        return '?' + urllib.parse.urlencode(params)
+        return '?' + urllib.parse.urlEncode(params)
 
-    def hash_pass(self, password):
-        auth_str = ('%s:%s' % (self.username, password)).encode('utf-8')
-        return 'Basic '.encode('utf-8') + base64.b64encode(auth_str).strip()
+    def hashPassword(self, password):
+        authStr = ('%s:%s' % (self.username, password)).encode('utf-8')
+        return 'Basic '.encode('utf-8') + base64.b64encode(authStr).strip()
 
-    def get_connection(self):
+    def getConnection(self):
         if self.prop.secure_http:
             conn = http.client.HTTPSConnection(self.prop.api_url)
         elif self.username is None:
@@ -282,9 +282,9 @@ class Content(object):
     def __init__(self, response):
         self.response = response
         self.body = response.read()
-        (self.mediatype, self.encoding) = self.get_ctype()
+        (self.mediatype, self.encoding) = self.getContentType()
 
-    def get_ctype(self):
+    def getContentType(self):
         '''Split the content-type field into mediatype and charset'''
         ctype = self.response.getheader('Content-Type')
 
@@ -305,7 +305,7 @@ class Content(object):
 
         return (mediatype, charset)
 
-    def decode_body(self):
+    def decodeBody(self):
         '''
         Decode (and replace) self.body via the charset encoding
         specified in the content-type header
@@ -318,12 +318,12 @@ class Content(object):
         Retrieve the body of the response, encoding it into a usuable
         form based on the media-type (mime-type)
         '''
-        handlerName = self.mangled_mtype()
+        handlerName = self.funMangledMediaType()
         handler = getattr(self, handlerName, self.x_application_unknown)
         return handler()
 
 
-    def mangled_mtype(self):
+    def funMangledMediaType(self):
         '''
         Mangle the media type into a suitable function name
         '''
@@ -338,7 +338,7 @@ class Content(object):
 
     def application_json(self):
         '''Handler for application/json media-type'''
-        self.decode_body()
+        self.decodeBody()
 
         try:
             pybody = json.loads(self.body)
