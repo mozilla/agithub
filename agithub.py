@@ -165,7 +165,7 @@ class Client(object):
             if password is None and token is None:
                 raise TypeError("You need a password to authenticate as " + username)
             if password is not None and token is not None:
-                raise TypeError("You cannot use both password and oauth token authenication")
+                raise TypeError("You cannot use both password and OAuth token authentication")
 
             self.authHeader = None
             if password is not None:
@@ -216,7 +216,7 @@ class Client(object):
     def patch(self, url, body=None, headers={}, **params):
         """
         Do a http patch request on the given url with given body, headers and parameters
-        Parameters is a dictionary that will will be urlencoded
+        Parameters is a dictionary that will will be url-encoded
         """
         url += self.urlEncode(params)
         return self.request(self.PATCH, url, json.dumps(body), headers)
@@ -285,7 +285,7 @@ class Content(object):
         (self.mediatype, self.encoding) = self.getContentType()
 
     def getContentType(self):
-        '''Split the content-type field into mediatype and charset'''
+        '''Split the content-type field into media-type and char-set'''
         ctype = self.response.getheader('Content-Type')
 
         start = 0
