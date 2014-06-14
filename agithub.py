@@ -273,15 +273,8 @@ class Client(object):
 
         return conn
 
-class ResponseBody(object):
-    '''
-    Decode a response from the server, respecting the Content-Type field
-    '''
-    def __init__(self, response):
-        self.response = response
-        self.body = response.read()
-        self.parseContentType(self.response.getheader('Content-Type'))
-        self.encoding = self.ctypeParameters['charset']
+class Body(object):
+    '''Superclass for ResponseBody and RequestBody'''
 
     def parseContentType(self, ctype):
         '''
@@ -327,6 +320,23 @@ class ResponseBody(object):
             # NB: ISO-8859-1 is specified (RFC 2068) as the default
             # charset in case none is provided
 
+    def funMangledMediaType(self):
+        '''
+        Mangle the media type into a suitable function name
+        '''
+        return self.mediatype.replace('-','_').replace('/','_')
+
+
+class ResponseBody(Body):
+    '''
+    Decode a response from the server, respecting the Content-Type field
+    '''
+    def __init__(self, response):
+        self.response = response
+        self.body = response.read()
+        self.parseContentType(self.response.getheader('Content-Type'))
+        self.encoding = self.ctypeParameters['charset']
+
     def decodeBody(self):
         '''
         Decode (and replace) self.body via the charset encoding
@@ -345,13 +355,6 @@ class ResponseBody(object):
                             self.application_octet_stream
                             )
         return handler()
-
-
-    def funMangledMediaType(self):
-        '''
-        Mangle the media type into a suitable function name
-        '''
-        return self.mediatype.replace('-','_').replace('/','_')
 
 
     ## media-type handlers
