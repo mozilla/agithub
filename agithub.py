@@ -292,7 +292,7 @@ class ResponseBody(object):
             end = ctype.index(';')
             mediatype = ctype[:end]
         except:
-            mediatype = 'x-application/unknown'
+            mediatype = 'application/octet-stream'
 
         try:
             start = 8 + ctype.index('charset=', end)
@@ -317,7 +317,9 @@ class ResponseBody(object):
         form based on the media-type (mime-type)
         '''
         handlerName = self.funMangledMediaType()
-        handler = getattr(self, handlerName, self.x_application_unknown)
+        handler = getattr(  self, handlerName,
+                            self.application_octet_stream
+                            )
         return handler()
 
 
@@ -330,8 +332,11 @@ class ResponseBody(object):
 
     ## media-type handlers
 
-    def x_application_unknown(self):
-        '''Handler for unknown media-types'''
+    def application_octet_stream(self):
+        '''Handler for binary data and unknown media-types. Importantly,
+        it does absolutely no pre-processing of the body, which means it
+        will not mess it up.
+        '''
         return self.body
 
     def application_json(self):
