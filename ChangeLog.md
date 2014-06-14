@@ -89,6 +89,9 @@ v2.0
     - Does GitHub support this? It should. And if so, we should use it
       by default
 
+* Parse Content-Type header more correctly; make a dict of the
+  parameters available to the media-type handlers
+
 v1.1.1
 ------
 
