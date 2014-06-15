@@ -232,6 +232,7 @@ class Client(object):
         if self.username:
             headers['authorization'] = self.authHeader
 
+
         reqBody = RequestBody(body, headers)
         conn = self.getConnection()
         conn.request(method, url, reqBody.process(), headers)
