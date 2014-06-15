@@ -23,6 +23,7 @@ STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 # objects.)
 DEFAULT_HEADERS = {
       'user-agent': 'agithub/' + STR_VERSION
+    , 'content-type' : 'application/json'
     }
 
 class API(object):
@@ -222,6 +223,11 @@ class Client(object):
         '''Low-level networking. All HTTP-method methods call this'''
 
         headers = self.updateWithDefaultHeaders(headers)
+
+        if body is None:
+            # Sending a content-type header wo/body might break some
+            # servers. Is this far-fetched?
+            del headers['content-type']
 
         if self.username:
             headers['authorization'] = self.authHeader
