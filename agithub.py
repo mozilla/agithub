@@ -210,10 +210,11 @@ class Client(object):
         return self.request('DELETE', url, None, headers)
 
     def patch(self, url, body=None, headers={}, **params):
-        """
-        Do a http patch request on the given url with given body, headers and parameters
-        Parameters is a dictionary that will will be url-encoded
-        """
+        '''
+        Do a http patch request on the given url with given body,
+        headers and parameters Parameters is a dictionary that will will
+        be url-encoded
+        '''
         url += self.urlEncode(params)
         return self.request(self.PATCH, url, body, headers)
 
@@ -344,10 +345,9 @@ class ResponseBody(Body):
         '''
         self.body = self.body.decode(self.encoding)
 
-
     def process(self):
         '''
-        Retrieve the body of the response, encoding it into a usuable
+        Retrieve the body of the response, encoding it into a usable
         form based on the media-type (mime-type)
         '''
         handlerName = self.funMangledMediaType()
@@ -381,7 +381,7 @@ class ResponseBody(Body):
     # XXX: This isn't technically correct, but we'll hope for the best.
     # Patches welcome!
 
-    # Insert new media-type handlers here
+    # Insert new Response media-type handlers here
 
 class RequestBody(Body):
     '''
