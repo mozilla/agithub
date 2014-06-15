@@ -185,8 +185,8 @@ class Client(object):
             raise TypeError("Client.setConnectionProperties: Expected ConnectionProperties object")
 
         self.prop = props
+        self.defaultHeaders = DEFAULT_HEADERS.copy()
         if self.prop.extra_headers is not None:
-            self.defaultHeaders = DEFAULT_HEADERS.copy()
             self.defaultHeaders.update(self.prop.extra_headers)
 
         # Enforce case restrictions on self.defaultHeaders
