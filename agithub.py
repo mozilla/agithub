@@ -203,10 +203,16 @@ class Client(object):
 
     def post(self, url, body=None, headers={}, **params):
         url += self.urlencode(params)
+        if not 'content-type' in headers:
+            # We're doing a json.dumps of body, so let's set the content-type to json
+            headers['content-type'] = 'application/json'
         return self.request('POST', url, json.dumps(body), headers)
 
     def put(self, url, body=None, headers={}, **params):
         url += self.urlencode(params)
+        if not 'content-type' in headers:
+            # We're doing a json.dumps of body, so let's set the content-type to json
+            headers['content-type'] = 'application/json'
         return self.request('PUT', url, json.dumps(body), headers)
 
     def delete(self, url, headers={}, **params):
@@ -219,6 +225,9 @@ class Client(object):
         Parameters is a dictionary that will will be urlencoded
         """
         url += self.urlencode(params)
+        if not 'content-type' in headers:
+            # We're doing a json.dumps of body, so let's set the content-type to json
+            headers['content-type'] = 'application/json'
         return self.request(self.PATCH, url, json.dumps(body), headers)
 
     def request(self, method, url, body, headers):
