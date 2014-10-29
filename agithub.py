@@ -228,7 +228,7 @@ class Client(object):
         if not 'content-type' in headers:
             # We're doing a json.dumps of body, so let's set the content-type to json
             headers['content-type'] = 'application/json'
-        return self.request(self.PATCH, url, json.dumps(body), headers)
+        return self.request('PATCH', url, json.dumps(body), headers)
 
     def request(self, method, url, body, headers):
         '''Low-level networking. All HTTP-method methods call this'''
