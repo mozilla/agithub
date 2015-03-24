@@ -29,11 +29,16 @@ can read the docs and immediately know how to do the examples via
 ## Example App
 
 1. First, instantiate a `Github` object, passing it your username and
-   password if an authenticated session is desired.
+   password or a token if an authenticated session is desired.
 
    ```python
    >>> from agithub import Github
    >>> g = Github('user', 'pass')
+   ```
+
+   ```python
+   >>> from agithub import Github
+   >>> g = Github(token='token')
    ```
 
 2. When you make a request, the status and response body are passed back

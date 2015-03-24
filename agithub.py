@@ -160,18 +160,16 @@ class Client(object):
             self.setConnectionProperties(connection_properties)
 
         # Set up authentication
-        self.username = username
-        if username is not None:
-            if password is None and token is None:
-                raise TypeError("You need a password to authenticate as " + username)
-            if password is not None and token is not None:
-                raise TypeError("You cannot use both password and oauth token authenication")
-
-            self.auth_header = None
+        self.auth_header = None
+        if token is not None:
             if password is not None:
-                self.auth_header = self.hash_pass(password)
-            elif token is not None:
-                self.auth_header = 'Token %s' % token
+                raise TypeError("You cannot use both password and oauth token authenication")
+            self.auth_header = 'Token %s' % token
+        elif username is not None:
+            if password is None:
+                raise TypeError("You need a password to authenticate as " + username)
+            self.username = username
+            self.auth_header = self.hash_pass(password)
 
     def setConnectionProperties(self, props):
         '''
@@ -235,7 +233,7 @@ class Client(object):
 
         headers = self._fix_headers(headers)
 
-        if self.username:
+        if self.auth_header:
             headers['authorization'] = self.auth_header
 
         #TODO: Context manager
@@ -274,13 +272,11 @@ class Client(object):
     def get_connection(self):
         if self.prop.secure_http:
             conn = http.client.HTTPSConnection(self.prop.api_url)
-        elif self.username is None:
+        elif self.auth_header is None:
             conn = http.client.HTTPConnection(self.prop.api_url)
         else:
-            raise ConnectionError('Refusing to authenticate over'
-                    ' non-secure  (HTTP) connection. To override, edit'
-                    ' the source'
-                    )
+            raise ConnectionError(
+                'Refusing to authenticate over non-secure (HTTP) connection.')
 
         return conn
 
