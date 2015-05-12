@@ -62,5 +62,15 @@ class TestRequestBuilder(unittest.TestCase):
                 , "params" : { "url" : "/path" }
                 })
 
+class TestClient(unittest.TestCase):
+    def newClient(self, *args, **params):
+        return agithub.Client(*args, **params)
+
+    def test_anonymousClient(self):
+        client = self.newClient()
+
+    def test_passwordClient(self):
+        client = self.newClient(username="user", password="freepass")
+
 if __name__ == '__main__':
     unittest.main()
