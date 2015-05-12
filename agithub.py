@@ -152,7 +152,8 @@ class Client(object):
 
     def __init__(self, username=None,
             password=None, token=None,
-            connection_properties=None
+            connection_properties=None,
+            httpClient = http.client
             ):
 
         # Set up connection properties
@@ -170,6 +171,11 @@ class Client(object):
                 raise TypeError("You need a password to authenticate as " + username)
             self.username = username
             self.auth_header = self.hash_pass(password)
+
+        # This argument is only used by the testing harness
+        if httpClient is None:
+            raise Exception("Invalid provider for http.CLIENT Injected")
+        self.httpClient = httpClient
 
     def setConnectionProperties(self, props):
         '''
@@ -271,9 +277,9 @@ class Client(object):
 
     def get_connection(self):
         if self.prop.secure_http:
-            conn = http.client.HTTPSConnection(self.prop.api_url)
+            conn = self.httpClient.HTTPSConnection(self.prop.api_url)
         elif self.auth_header is None:
-            conn = http.client.HTTPConnection(self.prop.api_url)
+            conn = self.httpClient.HTTPConnection(self.prop.api_url)
         else:
             raise ConnectionError(
                 'Refusing to authenticate over non-secure (HTTP) connection.')
