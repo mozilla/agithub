@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import agithub
 import mock
+import mock.http.client
 import unittest
 
 class TestGithubObjectCreation(unittest.TestCase):
@@ -64,7 +65,7 @@ class TestRequestBuilder(unittest.TestCase):
 
 class TestClient(unittest.TestCase):
     def newClient(self, *args, **params):
-        return agithub.Client(*args, **params)
+        return agithub.Client(*args, httpClient = mock.http.client, **params)
 
     def test_anonymousClient(self):
         client = self.newClient()
