@@ -47,11 +47,11 @@ class API(object):
         self.client.setConnectionProperties(props)
 
     def __getattr__(self, key):
-        return RequestBuilder(self.client).__getattr__(key)
+        return IncompleteRequest(self.client).__getattr__(key)
     __getitem__ = __getattr__
 
     def __repr__(self):
-        return RequestBuilder(self.client).__repr__()
+        return IncompleteRequest(self.client).__repr__()
 
     def getheaders(self):
         return self.client.headers
@@ -94,14 +94,15 @@ class Github(API):
         self.setClient(Client(*args, **kwargs))
         self.setConnectionProperties(props)
 
-class RequestBuilder(object):
-    '''RequestBuilders build HTTP requests via an HTTP-idiomatic notation,
+class IncompleteRequest(object):
+    '''IncompleteRequests are partially-built HTTP requests.
+    They can be built via an HTTP-idiomatic notation,
     or via "normal" method calls.
 
     Specifically,
-    >>> RequestBuilder(client).path.to.resource.METHOD(...)
+    >>> IncompleteRequest(client).path.to.resource.METHOD(...)
     is equivalent to
-    >>> RequestBuilder(client).client.METHOD('path/to/resource', ...)
+    >>> IncompleteRequest(client).client.METHOD('path/to/resource', ...)
     where METHOD is replaced by get, post, head, etc.
 
     Also, if you use an invalid path, too bad. Just be ready to catch a
@@ -129,10 +130,7 @@ class RequestBuilder(object):
     __getitem__ = __getattr__
 
     def __str__(self):
-        '''If you ever stringify this, you've (probably) messed up
-        somewhere. So let's give a semi-helpful message.
-        '''
-        return "I don't know about " + self.url
+        return self.url
 
     def __repr__(self):
         return '%s: %s' % (self.__class__, self.url)
