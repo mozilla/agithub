@@ -58,7 +58,7 @@ can read the docs and immediately know how to do the examples via
 
    ```python
    >>> g.issues
-   <class 'agithub.github.RequestBuilder'>: I don't know about /issues
+   <class 'agithub.github.IncompleteRequest'>: /issues
    ```
 
 4. Sometimes, it is inconvenient (or impossible) to refer to a URL as a
