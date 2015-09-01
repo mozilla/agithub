@@ -2,13 +2,13 @@ About this Document
 ===================
 
 This serves as both the change-log and TODO list for the project. It
-serves to clarify what's in an (anticipated) release, as well as to
-direct project momentum. (Actually, the whole point is so I'll remember
-to update the TODOs at least once per release ;-)
+serves to clarify what is in an (anticipated) release, as well as to
+direct project momentum. If you find something in here you want to do,
+by all means, please do. 
 
-At the top, you'll see project milestones (upcoming releases) and their
-associated TODOs. After that, you'll see a release version history in
-reverse chronological order. (The latest release comes
+At the top, you willll see project milestones (upcoming releases) and
+their associated TODOs. After that, you will see a release version
+history in reverse chronological order. (The latest release comes
 [first](#release).)
 
 Also note that the latest stable branch (the tip of [maint][maint]) is
@@ -88,20 +88,20 @@ v2.0
 * Support XML de-serialization. Python has (I think) built-in support
   for this
 
-v1.1.1
-------
-
-This is the upcoming [maint][maint] release. Even though it hasn't been
-released yet, it is the preferred *stable* branch because it includes
-fresh bug-fixes
-
-- Python-3 support for authenticated sessions
-
-[maint]: https://github.com/jpaugh/agithub/tree/maint
-
-
 Release
 =======
+
+v1.3
+----
+A stable branch, with a lot of bug fixes! (Thanks to all who
+contributed!) 
+
+* Feature: Unit tests (Uriel Corfa, Joachim Durchholz)
+* Grown-up Incomplete-request error message (Joachim Durchholz)
+* bug: PATCH method (ala)
+* bug: Allow using auth tokens without a username (Uriel Corfa)
+* bug: Set content-type to JSON when sending a JSON request
+  (Jens Timmerman)
 
 v1.2
 ----
