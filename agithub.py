@@ -84,7 +84,7 @@ class Github(API):
     '''
     def __init__(self, *args, **kwargs):
         props = ConnectionProperties(
-                    api_url = 'api.github.com',
+                    api_url = kwargs.pop('api_url', 'api.github.com'),
                     secure_http = True,
                     extra_headers = {
                         'accept' :    'application/vnd.github.v3+json'
