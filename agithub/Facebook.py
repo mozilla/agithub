@@ -1,3 +1,5 @@
+# Copyright 2012-2016 Jonathan Paugh and contributors
+# See COPYING for license details
 from base import *
 
 class Facebook(API):
