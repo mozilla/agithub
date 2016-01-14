@@ -248,28 +248,48 @@ class ResponseBody(object):
     def __init__(self, response):
         self.response = response
         self.body = response.read()
-        (self.mediatype, self.encoding) = self.get_ctype()
+        self.parseContentType(self.response.getheader('Content-Type'))
+        self.encoding = self.ctypeParameters['charset']
 
-    def get_ctype(self):
-        '''Split the content-type field into mediatype and charset'''
-        ctype = self.response.getheader('Content-Type')
-
-        start = 0
-        end = 0
-        try:
-            end = ctype.index(';')
-            mediatype = ctype[:end]
-        except:
+    def parseContentType(self, ctype):
+        '''
+        Parse the Content-Type header, returning the media-type and any
+        parameters
+        '''
+        if ctype is None:
             mediatype = 'application/octet-stream'
+            self.ctypeParameters = { 'charset' : 'ISO-8859-1' }
+            return
 
-        try:
-            start = 8 + ctype.index('charset=', end)
-            end = ctype.index(';', start)
-            charset = ctype[start:end].rstrip()
-        except:
-            charset = 'ISO-8859-1' #TODO
+        params = ctype.split(';')
+        self.mediatype = params.pop(0).strip()
 
-        return (mediatype, charset)
+        # Parse parameters
+        if len(params) > 0:
+            params = map(lambda s : s.strip().split('='), params)
+            paramDict = {}
+            for attribute, value in params:
+                # TODO: Find out if specifying an attribute multiple
+                # times is even okay, and how it should be handled
+                attribute = attribute.lower()
+                if attribute in paramDict:
+                    if type(paramDict[attribute]) is not list:
+                        # Convert singleton value to value-list
+                        paramDict[attribute] = [paramDict[attribute]]
+                    # Insert new value along with pre-existing ones
+                    paramDict[attribute] += value
+                else:
+                    # Insert singleton attribute value
+                    paramDict[attribute] = value
+            self.ctypeParameters = paramDict
+        else:
+            self.ctypeParameters = {}
+
+        if 'charset' not in self.ctypeParameters:
+            self.ctypeParameters['charset'] = 'ISO-8859-1'
+            # NB: INO-8859-1 is specified (RFC 2068) as the default
+            # charset in case none is provided
+
 
     def decode_body(self):
         '''
