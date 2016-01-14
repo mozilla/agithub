@@ -1,4 +1,4 @@
-from agithub import API, ConnectionProperties, Client
+from base import API, ConnectionProperties, Client
 
 class OpenWeatherMap(API):
     '''
