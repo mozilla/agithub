@@ -241,16 +241,10 @@ class Client(object):
 
         return conn
 
-class ResponseBody(object):
+class Body(object):
     '''
-    Decode a response from the server, respecting the Content-Type field
+    Superclass for ResponseBody and RequestBody
     '''
-    def __init__(self, response):
-        self.response = response
-        self.body = response.read()
-        self.parseContentType(self.response.getheader('Content-Type'))
-        self.encoding = self.ctypeParameters['charset']
-
     def parseContentType(self, ctype):
         '''
         Parse the Content-Type header, returning the media-type and any
@@ -290,6 +284,21 @@ class ResponseBody(object):
             # NB: INO-8859-1 is specified (RFC 2068) as the default
             # charset in case none is provided
 
+    def mangled_mtype(self):
+        '''
+        Mangle the media type into a suitable function name
+        '''
+        return self.mediatype.replace('-','_').replace('/','_')
+
+class ResponseBody(Body):
+    '''
+    Decode a response from the server, respecting the Content-Type field
+    '''
+    def __init__(self, response):
+        self.response = response
+        self.body = response.read()
+        self.parseContentType(self.response.getheader('Content-Type'))
+        self.encoding = self.ctypeParameters['charset']
 
     def decode_body(self):
         '''
@@ -297,7 +306,6 @@ class ResponseBody(object):
         specified in the content-type header
         '''
         self.body = self.body.decode(self.encoding)
-
 
     def processBody(self):
         '''
@@ -307,13 +315,6 @@ class ResponseBody(object):
         handlerName = self.mangled_mtype()
         handler = getattr(self, handlerName, self.application_octect_stream)
         return handler()
-
-
-    def mangled_mtype(self):
-        '''
-        Mangle the media type into a suitable function name
-        '''
-        return self.mediatype.replace('-','_').replace('/','_')
 
 
     ## media-type handlers
