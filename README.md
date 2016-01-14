@@ -1,10 +1,10 @@
-# The Agnostic Github API
+# The Agnostic GitHub API
 *It doesn't know, and you don't care!*
 
 `agithub` is a REST API client tailored to https://api.github.com, with
 a transparent syntax which facilitates rapid prototyping. It's code is
 lightweight: easy to understand, modify, and integrate. It's most
-salient feature is that it doesn't know the Github API&nbsp;&mdash; but
+salient feature is that it doesn't know the GitHub API&nbsp;&mdash; but
 that doesn't matter, since it fully supports it *anyway*.
 
 While browsing the
@@ -28,17 +28,17 @@ can read the docs and immediately know how to do the examples via
 
 ## Example App
 
-1. First, instantiate a `Github` object, passing it your username and
+1. First, instantiate a `GitHub` object, passing it your username and
    password or a token if an authenticated session is desired.
 
    ```python
-   >>> from agithub import Github
-   >>> g = Github('user', 'pass')
+   >>> from agithub.GitHub import GitHub
+   >>> g = GitHub('user', 'pass')
    ```
 
    ```python
-   >>> from agithub import Github
-   >>> g = Github(token='token')
+   >>> from agithub import GitHub
+   >>> g = GitHub(token='token')
    ```
 
 2. When you make a request, the status and response body are passed back
@@ -88,7 +88,7 @@ can read the docs and immediately know how to do the examples via
 
    You may find this useful&nbsp;&mdash; or not.
 
-6. Finally, `agithub` knows nothing at all about the Github API, and it
+6. Finally, `agithub` knows nothing at all about the GitHub API, and it
    won't second-guess you.
 
    ```python
@@ -96,7 +96,7 @@ can read the docs and immediately know how to do the examples via
    (404, {'message': 'Not Found'})
    ```
 
-   The error message you get is directly from Github's API. This gives
+   The error message you get is directly from GitHub's API. This gives
    you all of the information you need to survey the situation.
 
 7. If you need more information, the response headers of the previous
@@ -118,7 +118,7 @@ crop up:
 1. Networking Exceptions (from the `http` library). Catch these with
    `try .. catch` blocks, as you otherwise would.
 
-2. Github API errors. These means you're doing something wrong with the
+2. GitHub API errors. These means you're doing something wrong with the
    API, and they are always evident in the response's status. The API
    considerately returns a helpful error message in the JSON body.
 

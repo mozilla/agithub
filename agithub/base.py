@@ -32,12 +32,12 @@ class API(object):
     The toplevel object, and the "entry-point" into the client API.
     Subclass this to develop an application for a particular REST API.
 
-    Model your __init__ after the Github example.
+    Model your __init__ after the GitHub example.
     '''
     def __init__(self, *args, **kwargs):
         raise Exception (
                 'Please subclass API and override __init__()  to'
-                'provide a ConnectionProperties object. See the Github'
+                'provide a ConnectionProperties object. See the GitHub'
                 ' class for an example'
                 )
 
@@ -73,7 +73,7 @@ class IncompleteRequest(object):
 
     You can use item access instead of attribute access. This is
     convenient for using variables\' values and is required for numbers.
-    >>> Github('user','pass').whatever[1][x][y].post()
+    >>> GitHub('user','pass').whatever[1][x][y].post()
 
     To understand the method(...) calls, check out github.client.Client.
     '''

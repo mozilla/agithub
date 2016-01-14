@@ -1,9 +1,9 @@
 from base import *
 
-class Github(API):
-    '''The agnostic Github API. It doesn't know, and you don't care.
-    >>> from agithub import Github
-    >>> g = Github('user', 'pass')
+class GitHub(API):
+    '''The agnostic GitHub API. It doesn't know, and you don't care.
+    >>> from agithub import GitHub
+    >>> g = GitHub('user', 'pass')
     >>> status, data = g.issues.get(filter='subscribed')
     >>> data
     ... [ list_, of, stuff ]
@@ -22,7 +22,7 @@ class Github(API):
 
     That's all there is to it. (blah.post() should work, too.)
 
-    NOTE: It is up to you to spell things correctly. A Github object
+    NOTE: It is up to you to spell things correctly. A GitHub object
     doesn't even try to validate the url you feed it. On the other hand,
     it automatically supports the full API--so why should you care?
     '''

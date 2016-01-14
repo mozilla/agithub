@@ -1,33 +1,34 @@
 #!/usr/bin/env python
-import agithub
+from agithub.GitHub import GitHub
+from agithub.base import IncompleteRequest
 import mock
 import unittest
 
-class TestGithubObjectCreation(unittest.TestCase):
+class TestGitHubObjectCreation(unittest.TestCase):
     def test_user_pw(self):
-        gh = agithub.Github('korfuri', '1234')
+        gh = GitHub('korfuri', '1234')
         self.assertTrue(gh is not None)
 
-        gh = agithub.Github(username='korfuri', password='1234')
+        gh = GitHub(username='korfuri', password='1234')
         self.assertTrue(gh is not None)
 
     def test_token(self):
-        gh = agithub.Github(username='korfuri', token='deadbeef')
+        gh = GitHub(username='korfuri', token='deadbeef')
         self.assertTrue(gh is not None)
 
-        gh = agithub.Github(token='deadbeef')
+        gh = GitHub(token='deadbeef')
         self.assertTrue(gh is not None)
 
     def test_token_password(self):
         with self.assertRaises(TypeError):
-            gh = agithub.Github(
+            gh = GitHub(
                 username='korfuri', password='1234', token='deadbeef')
 
 
 class TestIncompleteRequest(unittest.TestCase):
 
     def newIncompleteRequest(self):
-        return agithub.IncompleteRequest(mock.Client())
+        return IncompleteRequest(mock.Client())
 
     def test_pathByGetAttr(self):
         rb = self.newIncompleteRequest()
