@@ -25,10 +25,10 @@ Unscheduled
 
 * Support encoding/serialization request bodies, analogous to the
   decoding/de-serialization for response bodies which is done in the
-  Content class
+  ResponseBody class
 
-    - This probably means reorganizing the Content class, perhaps adding
-      another level of structure
+    - This probably means reorganizing the ResponseBody class, perhaps
+      adding another level of structure
     - Find a convenient way for the user to specify request-body
       content-type. Maybe add a `content_type=` parameter to `put()` et
       al?

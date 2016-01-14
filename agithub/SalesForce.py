@@ -28,7 +28,7 @@ class SalesForce(API):
     (200, '<?xml version="1.0" encoding="UTF-8"?> ....')
 
     NB: XML is not automically decoded or de-serialized. Patch the
-    Content class to fix this.
+    ResponseBody class to fix this.
     '''
     def __init__(self, *args, **kwargs):
         props = ConnectionProperties(

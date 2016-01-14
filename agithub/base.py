@@ -202,7 +202,7 @@ class Client(object):
         conn.request(method, url, body, headers)
         response = conn.getresponse()
         status = response.status
-        content = Content(response)
+        content = ResponseBody(response)
         self.headers = response.getheaders()
 
         conn.close()
@@ -241,7 +241,7 @@ class Client(object):
 
         return conn
 
-class Content(object):
+class ResponseBody(object):
     '''
     Decode a response from the server, respecting the Content-Type field
     '''

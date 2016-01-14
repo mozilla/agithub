@@ -170,7 +170,7 @@ Here's how `agithub` works, under the hood:
   Just make sure that the header names are lower case.
 
 * Add a new media-type (a.k.a. content-type a.k.a mime-type) by
-  inserting a new method into the [`Content` class][3], replacing
+  inserting a new method into the [`ResponseBody` class][3], replacing
   `'-'` and `'/'` with `'_'` in the name. That method will then be
   responsible for converting the response body to a usable
   form&nbsp;&mdash; and for calling `decode_body` to do char-set
