@@ -68,8 +68,9 @@ class IncompleteRequest(object):
     >>> IncompleteRequest(client).client.METHOD('path/to/resource', ...)
     where METHOD is replaced by get, post, head, etc.
 
-    Also, if you use an invalid path, too bad. Just be ready to catch a
-    bad status from github.com. (Or maybe an httplib.error...)
+    Also, if you use an invalid path, too bad. Just be ready to handle a
+    bad status code from the upstream API. (Or maybe an
+    httplib.error...)
 
     You can use item access instead of attribute access. This is
     convenient for using variables\' values and is required for numbers.
@@ -83,9 +84,9 @@ class IncompleteRequest(object):
 
     def __getattr__(self, key):
         if key in self.client.http_methods:
-            mfun = getattr(self.client, key)
-            fun = partial(mfun, url=self.url)
-            return update_wrapper(fun, mfun)
+            htmlMethod = getattr(self.client, key)
+            wrapper = partial(htmlMethod, url=self.url)
+            return update_wrapper(wrapper, htmlMethod)
         else:
             self.url += '/' + str(key)
             return self
@@ -120,31 +121,20 @@ class Client(object):
         if connection_properties is not None:
             self.setConnectionProperties(connection_properties)
 
-        # Set up authentication
-        self.auth_header = None
-        if token is not None:
-            if password is not None:
-                raise TypeError("You cannot use both password and oauth token authenication")
-            self.auth_header = 'Token %s' % token
-        elif username is not None:
-            if password is None:
-                raise TypeError("You need a password to authenticate as " + username)
-            self.username = username
-            self.auth_header = self.hash_pass(password)
-
-    def setConnectionProperties(self, props):
+    def setConnectionProperties(self, prop):
         '''
         Initialize the connection properties. This must be called
         (either by passing connection_properties=... to __init__ or
         directly) before any request can be sent.
         '''
-        if type(props) is not ConnectionProperties:
+        if type(prop) is not ConnectionProperties:
             raise TypeError("Client.setConnectionProperties: Expected ConnectionProperties object")
 
-        self.prop = props
-        if self.prop.extra_headers is not None:
+        if prop.extra_headers is not None:
+            prop.filterEmptyHeaders()
             self.default_headers = _default_headers.copy()
-            self.default_headers.update(self.prop.extra_headers)
+            self.default_headers.update(prop.extra_headers)
+        self.prop = prop
 
         # Enforce case restrictions on self.default_headers
         tmp_dict = {}
@@ -193,9 +183,7 @@ class Client(object):
         '''Low-level networking. All HTTP-method methods call this'''
 
         headers = self._fix_headers(headers)
-
-        if self.auth_header:
-            headers['authorization'] = self.auth_header
+        url = self.prop.constructUrl(url)
 
         #TODO: Context manager
         conn = self.get_connection()
@@ -226,18 +214,15 @@ class Client(object):
             return ''
         return '?' + urllib.parse.urlencode(params)
 
-    def hash_pass(self, password):
-        auth_str = ('%s:%s' % (self.username, password)).encode('utf-8')
-        return 'Basic '.encode('utf-8') + base64.b64encode(auth_str).strip()
-
     def get_connection(self):
         if self.prop.secure_http:
             conn = http.client.HTTPSConnection(self.prop.api_url)
-        elif self.auth_header is None:
+        elif self.connection_properties.extra_headers is None \
+                or 'authorization' not in self.connection_properties.extra_headers:
             conn = http.client.HTTPConnection(self.prop.api_url)
         else:
             raise ConnectionError(
-                'Refusing to authenticate over non-secure (HTTP) connection.')
+                'Refusing to send the authorization header over an insecure connection.')
 
         return conn
 
@@ -251,7 +236,7 @@ class Body(object):
         parameters
         '''
         if ctype is None:
-            mediatype = 'application/octet-stream'
+            self.mediatype = 'application/octet-stream'
             self.ctypeParameters = { 'charset' : 'ISO-8859-1' }
             return
 
@@ -343,7 +328,7 @@ class ResponseBody(Body):
     # Insert new media-type handlers here
 
 class ConnectionProperties(object):
-    __slots__ = ['api_url', 'secure_http', 'extra_headers']
+    __slots__ = ['api_url', 'url_prefix', 'secure_http', 'extra_headers']
 
     def __init__(self, **props):
         # Initialize attribute slots
@@ -356,3 +341,20 @@ class ConnectionProperties(object):
                 raise TypeError("Invalid connection property: " + str(key))
             else:
                 setattr(self, key, val)
+
+    def constructUrl(self, url):
+        if self.url_prefix is None:
+            return url
+        return self.url_prefix + "/" + url
+
+    def filterEmptyHeaders(self):
+        if self.extra_headers is not None:
+            self.extra_headers = self._filterEmptyHeaders(self.extra_headers)
+
+    def _filterEmptyHeaders(self, headers):
+        newHeaders = {}
+        for header in headers.keys():
+            if header is not None and header != "":
+                newHeaders[header] = headers[header]
+
+        return newHeaders
