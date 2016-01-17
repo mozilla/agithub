@@ -1,5 +1,6 @@
 # The Agnostic GitHub API
-*It doesn't know, and you don't care!*
+
+> It doesn't know, and you don't care!
 
 `agithub` is a REST API client with transparent syntax which facilitates
 rapid prototyping&nbsp;&mdash; on *any* REST API!
@@ -14,8 +15,11 @@ support many other REST APIs:
 * SalesForce
 
 Additionally, you can add *full support* for another REST API with very
-little new code! To see how, check out the [GitHub client], which has
+little new code!  To see how, check out the [GitHub client], which has
 about 30 lines of code.
+
+This works because AGithub knows everything it needs to about protocol
+(REST, HTTP, TCP), but assumes nothing about your upstream API.
 
 [GitHub client]: https://github.com/jpaugh/agithub/blob/master/agithub/GitHub.py
 
@@ -23,12 +27,9 @@ about 30 lines of code.
 
 The most striking quality of AGitHub is how closely its syntax emulates
 HTTP. In fact, you might find it even more convenient that HTTP, and
-almost as general (as far as REST APIs go, anyway).
-
-To put in another way, `agithub` knows everything it needs to about
-protocol (REST, HTTP, TCP), but assumes nothing about your upstream API.
-The examples below tend to use the GitHub API as a refence point, but it
-is no less easy to use `agithub` with, say, the Facebook Graph.
+almost as general (as far as REST APIs go, anyway). The examples below
+tend to use the GitHub API as a refence point, but it is no less easy to
+use `agithub` with, say, the Facebook Graph.
 
 ## Get
 
