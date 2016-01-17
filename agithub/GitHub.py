@@ -3,7 +3,8 @@
 from base import *
 
 class GitHub(API):
-    '''The agnostic GitHub API. It doesn't know, and you don't care.
+    '''
+    The agnostic GitHub API. It doesn't know, and you don't care.
     >>> from agithub import GitHub
     >>> g = GitHub('user', 'pass')
     >>> status, data = g.issues.get(filter='subscribed')
@@ -28,15 +29,29 @@ class GitHub(API):
     doesn't even try to validate the url you feed it. On the other hand,
     it automatically supports the full API--so why should you care?
     '''
-    def __init__(self, *args, **kwargs):
+    def __init__(self, username=None, password=None, token=None, *args, **kwargs):
         props = ConnectionProperties(
                     api_url = 'api.github.com',
                     secure_http = True,
                     extra_headers = {
-                        'accept' :    'application/vnd.github.v3+json'
-                        }
-                    )
+                        'accept' : 'application/vnd.github.v3+json',
+                        'authorization' : self.generateAuthHeader(username, password, token)
+                    })
 
         self.setClient(Client(*args, **kwargs))
         self.setConnectionProperties(props)
 
+    def generateAuthHeader(self, username=None, password=None, token=None):
+        if token is not None:
+            if password is not None:
+                raise TypeError("You cannot use both password and oauth token authenication")
+            return 'Token %s' % token
+        elif username is not None:
+            if password is None:
+                raise TypeError("You need a password to authenticate as " + username)
+            self.username = username
+            return self.hash_pass(password)
+
+    def hash_pass(self, password):
+        auth_str = ('%s:%s' % (self.username, password)).encode('utf-8')
+        return 'Basic '.encode('utf-8') + base64.b64encode(auth_str).strip()

@@ -120,18 +120,6 @@ class Client(object):
         if connection_properties is not None:
             self.setConnectionProperties(connection_properties)
 
-        # Set up authentication
-        self.auth_header = None
-        if token is not None:
-            if password is not None:
-                raise TypeError("You cannot use both password and oauth token authenication")
-            self.auth_header = 'Token %s' % token
-        elif username is not None:
-            if password is None:
-                raise TypeError("You need a password to authenticate as " + username)
-            self.username = username
-            self.auth_header = self.hash_pass(password)
-
     def setConnectionProperties(self, props):
         '''
         Initialize the connection properties. This must be called
@@ -143,6 +131,7 @@ class Client(object):
 
         self.prop = props
         if self.prop.extra_headers is not None:
+            self.prop.extra_headers = self.filterEmptyHeaders(self.prop.extra_headers)
             self.default_headers = _default_headers.copy()
             self.default_headers.update(self.prop.extra_headers)
 
@@ -151,6 +140,14 @@ class Client(object):
         for k,v in self.default_headers.items():
             tmp_dict[k.lower()] = v
         self.default_headers = tmp_dict
+
+    def filterEmptyHeaders(self, headers):
+        newHeaders = {}
+        for header in headers.keys():
+            if header is not None and header != "":
+                newHeaders[header] = headers[header]
+
+        return newHeaders
 
     def head(self, url, headers={}, **params):
         url += self.urlencode(params)
@@ -194,9 +191,6 @@ class Client(object):
 
         headers = self._fix_headers(headers)
 
-        if self.auth_header:
-            headers['authorization'] = self.auth_header
-
         #TODO: Context manager
         conn = self.get_connection()
         conn.request(method, url, body, headers)
@@ -226,18 +220,15 @@ class Client(object):
             return ''
         return '?' + urllib.parse.urlencode(params)
 
-    def hash_pass(self, password):
-        auth_str = ('%s:%s' % (self.username, password)).encode('utf-8')
-        return 'Basic '.encode('utf-8') + base64.b64encode(auth_str).strip()
-
     def get_connection(self):
         if self.prop.secure_http:
             conn = http.client.HTTPSConnection(self.prop.api_url)
-        elif self.auth_header is None:
+        elif self.connection_properties.extra_headers is None \
+                or 'authorization' not in self.connection_properties.extra_headers:
             conn = http.client.HTTPConnection(self.prop.api_url)
         else:
             raise ConnectionError(
-                'Refusing to authenticate over non-secure (HTTP) connection.')
+                'Refusing to send the authorization header over an insecure connection.')
 
         return conn
 
