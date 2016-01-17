@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '1.3'
+version = '2.0'
 
 setup(name='agithub',
       version=version,
