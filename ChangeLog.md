@@ -37,16 +37,6 @@ Unscheduled
 * Get total coverage in the test suite, with the possible exception of
   actually sending a request across the wire
 
-* Support encoding/serialization request bodies, analogous to the
-  decoding/de-serialization for response bodies which is done in the
-  ResponseBody class
-
-    - This probably means reorganizing the ResponseBody class, perhaps
-      adding another level of structure
-
-    - Does GitHub support this? It should. And if so, we should use it
-      by default
-
 * Support reusing TCP connections, and "pipelining" of requests, a la
   RFC 2068, Sect 8.1, L2377
 
