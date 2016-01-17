@@ -68,8 +68,9 @@ class IncompleteRequest(object):
     >>> IncompleteRequest(client).client.METHOD('path/to/resource', ...)
     where METHOD is replaced by get, post, head, etc.
 
-    Also, if you use an invalid path, too bad. Just be ready to catch a
-    bad status from github.com. (Or maybe an httplib.error...)
+    Also, if you use an invalid path, too bad. Just be ready to handle a
+    bad status code from the upstream API. (Or maybe an
+    httplib.error...)
 
     You can use item access instead of attribute access. This is
     convenient for using variables\' values and is required for numbers.
@@ -83,9 +84,9 @@ class IncompleteRequest(object):
 
     def __getattr__(self, key):
         if key in self.client.http_methods:
-            mfun = getattr(self.client, key)
-            fun = partial(mfun, url=self.url)
-            return update_wrapper(fun, mfun)
+            htmlMethod = getattr(self.client, key)
+            wrapper = partial(htmlMethod, url=self.url)
+            return update_wrapper(wrapper, htmlMethod)
         else:
             self.url += '/' + str(key)
             return self
