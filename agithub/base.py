@@ -121,34 +121,26 @@ class Client(object):
         if connection_properties is not None:
             self.setConnectionProperties(connection_properties)
 
-    def setConnectionProperties(self, props):
+    def setConnectionProperties(self, prop):
         '''
         Initialize the connection properties. This must be called
         (either by passing connection_properties=... to __init__ or
         directly) before any request can be sent.
         '''
-        if type(props) is not ConnectionProperties:
+        if type(prop) is not ConnectionProperties:
             raise TypeError("Client.setConnectionProperties: Expected ConnectionProperties object")
 
-        self.prop = props
-        if self.prop.extra_headers is not None:
-            self.prop.extra_headers = self.filterEmptyHeaders(self.prop.extra_headers)
+        if prop.extra_headers is not None:
+            prop.filterEmptyHeaders()
             self.default_headers = _default_headers.copy()
-            self.default_headers.update(self.prop.extra_headers)
+            self.default_headers.update(prop.extra_headers)
+        self.prop = prop
 
         # Enforce case restrictions on self.default_headers
         tmp_dict = {}
         for k,v in self.default_headers.items():
             tmp_dict[k.lower()] = v
         self.default_headers = tmp_dict
-
-    def filterEmptyHeaders(self, headers):
-        newHeaders = {}
-        for header in headers.keys():
-            if header is not None and header != "":
-                newHeaders[header] = headers[header]
-
-        return newHeaders
 
     def head(self, url, headers={}, **params):
         url += self.urlencode(params)
@@ -348,3 +340,15 @@ class ConnectionProperties(object):
                 raise TypeError("Invalid connection property: " + str(key))
             else:
                 setattr(self, key, val)
+
+    def filterEmptyHeaders(self):
+        if self.extra_headers is not None:
+            self.extra_headers = self._filterEmptyHeaders(self.extra_headers)
+
+    def _filterEmptyHeaders(self, headers):
+        newHeaders = {}
+        for header in headers.keys():
+            if header is not None and header != "":
+                newHeaders[header] = headers[header]
+
+        return newHeaders
