@@ -183,6 +183,7 @@ class Client(object):
         '''Low-level networking. All HTTP-method methods call this'''
 
         headers = self._fix_headers(headers)
+        url = self.prop.constructUrl(url)
 
         #TODO: Context manager
         conn = self.get_connection()
@@ -327,7 +328,7 @@ class ResponseBody(Body):
     # Insert new media-type handlers here
 
 class ConnectionProperties(object):
-    __slots__ = ['api_url', 'secure_http', 'extra_headers']
+    __slots__ = ['api_url', 'url_prefix', 'secure_http', 'extra_headers']
 
     def __init__(self, **props):
         # Initialize attribute slots
@@ -340,6 +341,11 @@ class ConnectionProperties(object):
                 raise TypeError("Invalid connection property: " + str(key))
             else:
                 setattr(self, key, val)
+
+    def constructUrl(self, url):
+        if self.url_prefix is None:
+            return url
+        return self.url_prefix + "/" + url
 
     def filterEmptyHeaders(self):
         if self.extra_headers is not None:
