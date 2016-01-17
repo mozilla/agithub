@@ -23,8 +23,8 @@ STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 # can be explicitly overridden by the client code. (Used in Client
 # objects.)
 _default_headers = {
-    #XXX: Header field names MUST be lowercase; this is not checked
-      'user-agent': 'agithub/' + STR_VERSION
+      'user-agent': 'agithub/' + STR_VERSION,
+      'content-type': 'application/json'
     }
 
 class API(object):
@@ -181,6 +181,11 @@ class Client(object):
 
         headers = self._fix_headers(headers)
         url = self.prop.constructUrl(url)
+
+        if bodyData is None:
+            # Sending a content-type w/o the body might break some
+            # servers. Maybe?
+            del headers['content-type']
 
         #TODO: Context manager
         requestBody = RequestBody(bodyData, headers)
