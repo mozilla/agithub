@@ -23,19 +23,6 @@ Upcoming
 Unscheduled
 -----------
 
-* Support encoding/serialization request bodies, analogous to the
-  decoding/de-serialization for response bodies which is done in the
-  ResponseBody class
-
-    - This probably means reorganizing the ResponseBody class, perhaps
-      adding another level of structure
-    - Find a convenient way for the user to specify request-body
-      content-type. Maybe add a `content_type=` parameter to `put()` et
-      al?
-
-    - Does GitHub support this? It should. And if so, we should use it
-      by default
-
 * Create a script to pack the basic module and any given set of
   service-specific classes as one file. I still like the idea that a
   given API (e.g. Facebook) could be packed into a single file, and
@@ -43,25 +30,51 @@ Unscheduled
 
 * Actually support OAuth
 
-* TODO: Use a real, venerable test framework&nbsp;&mdash; maybe unittest
+* Use a real, venerable test framework&nbsp;&mdash; maybe unittest
 
 * Support Request/Response compression. Here's a great [tutorial][sftut]
 
 * Get total coverage in the test suite, with the possible exception of
   actually sending a request across the wire
 
+* Support encoding/serialization request bodies, analogous to the
+  decoding/de-serialization for response bodies which is done in the
+  ResponseBody class
+
+    - This probably means reorganizing the ResponseBody class, perhaps
+      adding another level of structure
+
+    - Does GitHub support this? It should. And if so, we should use it
+      by default
+
+* Support reusing TCP connections, and "pipelining" of requests, a la
+  RFC 2068, Sect 8.1, L2377
+
+    - The user must ask for pipelining, and supply a callback function
+      to be called after a response is received.
+    - Rename Client.request() -> Client.addRequest() (or such)
+    - Have Client.addRequest() check whether a persistent connection is
+      wanted, and save the entire request in a Client.pendingRequests
+      list in that case
+    - Create a new Client.sendRequests() method which the user may call
+      to send all requests up the pipeline. (It should work even if the
+      server does not support pipelining)
+    - Call the user-supplied callback whenever a request is received.
+      There are some concurrency issues here, and we may elect to call
+      the callback only after *all* requests are received.
+
 [sftut]: http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#CSHID=intro_rest_compression.htm|StartTopic=Content%2Fintro_rest_compression.htm|SkinName=webhelp
 
 v3.0
 ----
 * Unbreak the test suite
-* Convert most identifiers from `under_scores` to `camelCase` (An
-  exception will be the media-type converters in Content (e.g.
-  application_json))
+* Be consistently `camelCase` (Exception: the media-type converters in
+  Content (e.g.  `application_json`) should stay the same.)
 
 v2.1
 ----
 * Support XML de-serialization. (pick from [next-xml])
+* Request body content-type serialization & charset encoding
 
 [next-xml]: https://github.com/jpaugh/agithub/commit/3d373435c8110612cad061e9a9b31a7a1abd752c
 
