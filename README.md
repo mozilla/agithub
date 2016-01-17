@@ -1,30 +1,69 @@
 # The Agnostic GitHub API
 *It doesn't know, and you don't care!*
 
-`agithub` is a REST API client tailored to https://api.github.com, with
-a transparent syntax which facilitates rapid prototyping. It's code is
-lightweight: easy to understand, modify, and integrate. It's most
-salient feature is that it doesn't know the GitHub API&nbsp;&mdash; but
-that doesn't matter, since it fully supports it *anyway*.
+`agithub` is a REST API client with transparent syntax which facilitates
+rapid prototyping&nbsp;&mdash; on *any* REST API!
 
-While browsing the
-[API documentation](https://developer.github.com/v3/), you can convert
-the following
+Originally tailored to the GitHub REST API, AGitHub has grown up to
+support many other REST APIs:
+
+* DigitalOcean
+* Facebook
+* GitHub
+* OpenWeatherMap
+* SalesForce
+
+Additionally, you can add *full support* for another REST API with very
+little new code! To see how, check out the [GitHub client], which has
+about 30 lines of code.
+
+[GitHub client]: https://github.com/jpaugh/agithub/blob/master/agithub/GitHub.py
+
+# Use
+
+The most striking quality of AGitHub is how closely its syntax emulates
+HTTP. In fact, you might find it even more convenient that HTTP, and
+almost as general (as far as REST APIs go, anyway).
+
+To put in another way, `agithub` knows everything it needs to about
+protocol (REST, HTTP, TCP), but assumes nothing about your upstream API.
+The examples below tend to use the GitHub API as a refence point, but it
+is no less easy to use `agithub` with, say, the Facebook Graph.
+
+## Get
+
+Here's how to do a `GET` request, with proprely-encoded url parameters:
+
+```python
+client.issues.get(filter='subscribed')
+```
+
+That is equivalent to the following:
 
 ```http
 GET /issues/?filter=subscribed
 ```
 
-into
+## Post
+
+Here's how to send a request body along with your request:
 
 ```python
-g.issues.get(filter='subscribed')
+client.video.upload.post(body=someObject, tags="social devcon")
 ```
 
-and trust that `agithub` will do exactly what you tell it to. It doesn't
-second guess you, and it doesn't do anything behind your back. So, you
-can read the docs and immediately know how to do the examples via
-`agithub`&nbsp;&mdash; and get on with your life.
+This will send the following request, with `someObject` serialized as
+the request body:<sup>*</sup>
+
+```http
+POST /video/upload?tags=social+devcon
+
+<serialized request body>
+```
+
+<sup>*</sup>&nbsp;For now, the request body is limited to JSON data; but
+we plan to add support for other types as well
+
 
 ## Example App
 
@@ -135,23 +174,23 @@ Here's how `agithub` works, under the hood:
 
 ##### `header=`
 
-  You can include custom headers as a dictionary supplied to the
-  `headers=` argument. Some headers are provided by default (such as
-  User-Agent). If these occur in the supplied dictionary, they will be
-  overridden.
+You can include custom headers as a dictionary supplied to the
+`headers=` argument. Some headers are provided by default (such as
+User-Agent). If these occur in the supplied dictionary, the default
+value will be overridden.
 
 
 ##### `body=`
 
-  If you're using POST, PUT, or PATCH (`post()`, `put()`, and
-  `patch()`), then you should include the body as the `body=` argument.
-  The body is serialized to JSON before sending it out on the wire.
+If you're using `POST`, `PUT`, or `PATCH` (`post()`, `put()`, and
+`patch()`), then you should include the body as the `body=` argument.
+The body is serialized to JSON before sending it out on the wire.
 
 ##### GET Parameters
 
-  Any other arguments to the Python method become GET parameters, and
-  are tacked onto the end of the URL. They are, of course, url-encoded
-  for you.
+Any other arguments to the Python method become GET parameters, and are
+tacked onto the end of the URL. They are, of course, url-encoded for
+you.
 
 3. When the response is received, `agithub` looks at its content
    type to determine how to handle it, possibly decoding it from the
@@ -184,6 +223,6 @@ become an expert on the code. From there, anything's possible.
 [3]: https://github.com/jpaugh/agithub/blob/master/agithub.py#L255
 
 ## License
-Copyright 2012&ndash;2014 Jonathan Paugh
+Copyright 2012&ndash;2016 Jonathan Paugh and contributors
 See [COPYING][LIC] for license details
 [LIC]: https://github.com/jpaugh/agithub/blob/master/COPYING
