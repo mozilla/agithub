@@ -251,7 +251,7 @@ class Body(object):
         parameters
         '''
         if ctype is None:
-            mediatype = 'application/octet-stream'
+            self.mediatype = 'application/octet-stream'
             self.ctypeParameters = { 'charset' : 'ISO-8859-1' }
             return
 
