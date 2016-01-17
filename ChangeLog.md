@@ -1,3 +1,11 @@
+Notice
+======
+
+This document is woefully out of date. Some of the features under
+<a href="#upcoming">Upcoming</a> have already been done, while others
+may never see the light of day.
+
+
 About this Document
 ===================
 
