@@ -153,16 +153,14 @@ class Client(object):
     def post(self, url, body=None, headers={}, **params):
         url += self.urlencode(params)
         if not 'content-type' in headers:
-            # We're doing a json.dumps of body, so let's set the content-type to json
             headers['content-type'] = 'application/json'
-        return self.request('POST', url, json.dumps(body), headers)
+        return self.request('POST', url, body, headers)
 
     def put(self, url, body=None, headers={}, **params):
         url += self.urlencode(params)
         if not 'content-type' in headers:
-            # We're doing a json.dumps of body, so let's set the content-type to json
             headers['content-type'] = 'application/json'
-        return self.request('PUT', url, json.dumps(body), headers)
+        return self.request('PUT', url, body, headers)
 
     def delete(self, url, headers={}, **params):
         url += self.urlencode(params)
@@ -175,19 +173,19 @@ class Client(object):
         """
         url += self.urlencode(params)
         if not 'content-type' in headers:
-            # We're doing a json.dumps of body, so let's set the content-type to json
             headers['content-type'] = 'application/json'
-        return self.request('PATCH', url, json.dumps(body), headers)
+        return self.request('PATCH', url, body, headers)
 
-    def request(self, method, url, body, headers):
+    def request(self, method, url, bodyData, headers):
         '''Low-level networking. All HTTP-method methods call this'''
 
         headers = self._fix_headers(headers)
         url = self.prop.constructUrl(url)
 
         #TODO: Context manager
+        requestBody = RequestBody(bodyData, headers)
         conn = self.get_connection()
-        conn.request(method, url, body, headers)
+        conn.request(method, url, requestBody.process(), headers)
         response = conn.getresponse()
         status = response.status
         content = ResponseBody(response)
@@ -326,6 +324,56 @@ class ResponseBody(Body):
     # Patches welcome!
 
     # Insert new media-type handlers here
+
+class RequestBody(Body):
+    '''
+    Encode a request body from the client, respecting the Content-Type
+    field
+    '''
+    def __init__(self, body, headers):
+        self.body = body
+        self.headers = headers
+        self.parseContentType(
+                getattr(self.headers, 'content-type', None))
+        self.encoding = self.ctypeParameters['charset']
+
+    def encodeBody(self):
+        '''
+        Encode (and overwrite) self.body via the charset encoding
+        specified in the request headers. This should be called by the
+        media-type handler when appropriate
+        '''
+        self.body = self.body.encode(self.encoding)
+
+    def process(self):
+        '''
+        Process the request body by applying a media-type specific
+        handler to it.
+        '''
+        if self.body is None:
+            return None
+
+        handlerName = self.funMangledMediaType()
+        handler = getattr(  self, handlerName,
+                            self.application_octet_stream
+                            )
+        return handler()
+
+    ## media-type handlers
+
+    def application_octet_stream(self):
+        '''Handler for binary data and unknown media-types. Importantly,
+        it does absolutely no pre-processing of the body, which means it
+        will not mess it up.
+        '''
+        return self.body
+
+    def application_json(self):
+        self.body = json.dumps(self.body)
+        self.encodeBody()
+        return self.body
+
+    # Insert new Request media-type handlers here
 
 class ConnectionProperties(object):
     __slots__ = ['api_url', 'url_prefix', 'secure_http', 'extra_headers']
