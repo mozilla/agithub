@@ -185,7 +185,8 @@ class Client(object):
         if bodyData is None:
             # Sending a content-type w/o the body might break some
             # servers. Maybe?
-            del headers['content-type']
+            if 'content-type' in headers:
+                del headers['content-type']
 
         #TODO: Context manager
         requestBody = RequestBody(bodyData, headers)
