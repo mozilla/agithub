@@ -399,7 +399,7 @@ class ConnectionProperties(object):
     def constructUrl(self, url):
         if self.url_prefix is None:
             return url
-        return self.url_prefix + "/" + url
+        return self.url_prefix + url
 
     def filterEmptyHeaders(self):
         if self.extra_headers is not None:
