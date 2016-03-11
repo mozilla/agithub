@@ -221,8 +221,8 @@ class Client(object):
     def get_connection(self):
         if self.prop.secure_http:
             conn = http.client.HTTPSConnection(self.prop.api_url)
-        elif self.connection_properties.extra_headers is None \
-                or 'authorization' not in self.connection_properties.extra_headers:
+        elif self.prop.extra_headers is None \
+                or 'authorization' not in self.prop.extra_headers:
             conn = http.client.HTTPConnection(self.prop.api_url)
         else:
             raise ConnectionError(
@@ -319,8 +319,10 @@ class ResponseBody(Body):
         self.decode_body()
 
         try:
+            print("Yes, we can!")
             pybody = json.loads(self.body)
         except ValueError:
+            print("No, actually: we can't!")
             pybody = self.body
 
         return pybody
