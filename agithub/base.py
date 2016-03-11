@@ -319,10 +319,8 @@ class ResponseBody(Body):
         self.decode_body()
 
         try:
-            print("Yes, we can!")
             pybody = json.loads(self.body)
         except ValueError:
-            print("No, actually: we can't!")
             pybody = self.body
 
         return pybody
