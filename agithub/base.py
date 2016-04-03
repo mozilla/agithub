@@ -339,8 +339,7 @@ class RequestBody(Body):
     def __init__(self, body, headers):
         self.body = body
         self.headers = headers
-        self.parseContentType(
-                getattr(self.headers, 'content-type', None))
+        self.parseContentType(self.headers.get('content-type', None))
         self.encoding = self.ctypeParameters['charset']
 
     def encodeBody(self):
@@ -359,7 +358,7 @@ class RequestBody(Body):
         if self.body is None:
             return None
 
-        handlerName = self.funMangledMediaType()
+        handlerName = self.mangled_mtype()
         handler = getattr(  self, handlerName,
                             self.application_octet_stream
                             )
