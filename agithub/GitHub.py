@@ -38,7 +38,7 @@ class GitHub(API):
                     api_url = kwargs.pop('api_url', 'api.github.com'),
                     secure_http = True,
                     extra_headers = extraHeaders
-                    })
+                    )
 
         self.setClient(Client(*args, **kwargs))
         self.setConnectionProperties(props)
