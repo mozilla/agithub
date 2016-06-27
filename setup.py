@@ -1,13 +1,10 @@
-#!/usr/bin/env python
-from distutils.core import setup
+from setuptools import setup, find_packages
+
+version = '2.1'
 
 setup(name='agithub',
-      version='1.3',
-      author='Jonathan Paugh',
-      url='https://github.com/jaredhobbs/agithub',
-      description="The agnostic Github API. It doesn't know, "
-                  "and you don't care.",
-      py_modules=['agithub'],
+      version=version,
+      description="A lightweight, transparent syntax for REST clients",
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Environment :: Console',
@@ -17,4 +14,12 @@ setup(name='agithub',
           'Programming Language :: Python :: 3',
           'Topic :: Utilities',
       ],
-      keywords=['github', 'api'])
+      keywords=['api', 'REST', 'GitHub', 'Facebook', 'SalesForce'],
+      author='Jonathan Paugh',
+      author_email='jpaugh@gmx.us',
+      url='https://github.com/jpaugh/agithub',
+      license='MIT',
+      packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+      include_package_data=True,
+      zip_safe=False,
+      )

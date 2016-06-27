@@ -23,73 +23,63 @@ Upcoming
 Unscheduled
 -----------
 
-* Support encoding/serialization request bodies, analogous to the
-  decoding/de-serialization for response bodies which is done in the
-  Content class
-
-    - This probably means reorganizing the Content class, perhaps adding
-      another level of structure
-    - Find a convenient way for the user to specify request-body
-      content-type. Maybe add a `content_type=` parameter to `put()` et
-      al?
-
-    - Does GitHub support this? It should. And if so, we should use it
-      by default
-
 * Create a script to pack the basic module and any given set of
-  service-specific classes as one file
-
-    - Separate GitHub class into a separate module
-
-* Rename the project, and migrate it to a new project url. At the same
-  time, the original [link][link] should point to a stripped down
-  version that
-
-    a) Works perfectly for GitHub's API, unchanged
-
-    b) Mentions the new project in the README
-
-    c) Is updated jointly (at release milestones) by uploading the
-    result of `pack-script GitHub` (The `pack-script` is described above.)
-
-  #### Motivation
-  The [project][link] is referenced from GitHub's official list of API
-  clients. Ergo, anything not pertaining to GitHub's API doesn't really
-  belong at that URL&nbsp;&mdash; it's distracting. Users should be made
-  aware of the generic version without being forced to migrate.
-
-  Besides, the updates could easily be automated via a post-push hook
-  that walks the `master`/`maint` history in the main project; and
-  thereby be supported indefinitely without fuss
-
-[link]: https://github.com/jpaugh/agithub
+  service-specific classes as one file. I still like the idea that a
+  given API (e.g. Facebook) could be packed into a single file, and
+  dropped into another project as a unit.
 
 * Actually support OAuth
 
-* TODO: Use a real, venerable test framework&nbsp;&mdash; maybe unittest
+* Use a real, venerable test framework&nbsp;&mdash; maybe unittest
 
 * Support Request/Response compression. Here's a great [tutorial][sftut]
 
+* Get total coverage in the test suite, with the possible exception of
+  actually sending a request across the wire
+
+* Support reusing TCP connections, and "pipelining" of requests, a la
+  RFC 2068, Sect 8.1, L2377
+
+    - The user must ask for pipelining, and supply a callback function
+      to be called after a response is received.
+    - Rename Client.request() -> Client.addRequest() (or such)
+    - Have Client.addRequest() check whether a persistent connection is
+      wanted, and save the entire request in a Client.pendingRequests
+      list in that case
+    - Create a new Client.sendRequests() method which the user may call
+      to send all requests up the pipeline. (It should work even if the
+      server does not support pipelining)
+    - Call the user-supplied callback whenever a request is received.
+      There are some concurrency issues here, and we may elect to call
+      the callback only after *all* requests are received.
+
 [sftut]: http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#CSHID=intro_rest_compression.htm|StartTopic=Content%2Fintro_rest_compression.htm|SkinName=webhelp
 
-
-v2.0
+v3.0
 ----
+* Unbreak the test suite
+* Be consistently `camelCase` (Exception: the media-type converters in
+  Content (e.g.  `application_json`) should stay the same.)
 
-* Refactor code-base
+v2.1
+----
+* Support XML de-serialization. (pick from [next-xml])
+* Request body content-type serialization & charset encoding
 
-    - In particular, we need to spell "GitHub" correctly:
-        `Github` -> `GitHub`
-    - Convert most identifiers from `under_scores` to `camelCase` (An
-      exception will be the media-type converters in Content (e.g.
-      application_json))
-    - Fix anything else that makes me squeamish
-
-* Support XML de-serialization. Python has (I think) built-in support
-  for this
+[next-xml]: https://github.com/jpaugh/agithub/commit/3d373435c8110612cad061e9a9b31a7a1abd752c
 
 Release
 =======
+
+v2.0
+----
+* Features:
+    - Setup.py, for easy installation (Marcos Hernández)
+    - Legit Python package
+    - `url_prefix`: Ability to add an always-on prefix to the url for an API
+* Bugfixes:
+    - Use `application/octet-stream` for unknown media type
+    - Spell 'GitHub' correctly
 
 v1.3
 ----

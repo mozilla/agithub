@@ -1,7 +1,6 @@
-# Copyright 2012-2014 Jonathan Paugh
+# Copyright 2012-2016 Jonathan Paugh and contributors
 # See COPYING for license details
 import json
-import base64
 from functools import partial, update_wrapper
 
 import sys
@@ -15,15 +14,15 @@ else:
     class ConnectionError(OSError):
         pass
 
-VERSION = [1, 3]
+VERSION = [2, 1]
 STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 
 # These headers are implicitly included in each request; however, each
 # can be explicitly overridden by the client code. (Used in Client
 # objects.)
 _default_headers = {
-    # XXX: Header field names MUST be lowercase; this is not checked
-    'user-agent': 'agithub/' + STR_VERSION
+    'user-agent': 'agithub/' + STR_VERSION,
+    'content-type': 'application/json'
 }
 
 
@@ -32,13 +31,13 @@ class API(object):
     The toplevel object, and the "entry-point" into the client API.
     Subclass this to develop an application for a particular REST API.
 
-    Model your __init__ after the Github example.
+    Model your __init__ after the GitHub example.
     """
     def __init__(self, *args, **kwargs):
         raise Exception(
-            'Please subclass API and override __init__()  to'
-            'provide a ConnectionProperties object. See the Github'
-            ' class for an example'
+            'Please subclass API and override __init__() to '
+            'provide a ConnectionProperties object. See the GitHub '
+            'class for an example'
         )
 
     def setClient(self, client):
@@ -58,46 +57,9 @@ class API(object):
         return self.client.headers
 
 
-class Github(API):
-    """The agnostic Github API. It doesn't know, and you don't care.
-    >>> from agithub import Github
-    >>> g = Github('user', 'pass')
-    >>> status, data = g.issues.get(filter='subscribed')
-    >>> data
-    ... [ list_, of, stuff ]
-
-    >>> status, data = g.repos.jpaugh.repla.issues[1].get()
-    >>> data
-    ... { 'dict': 'my issue data', }
-
-    >>> name, repo = 'jpaugh', 'repla'
-    >>> status, data = g.repos[name][repo].issues[1].get()
-    ... same thing
-
-    >>> status, data = g.funny.I.donna.remember.that.one.get()
-    >>> status
-    ... 404
-
-    That's all there is to it. (blah.post() should work, too.)
-
-    NOTE: It is up to you to spell things correctly. A Github object
-    doesn't even try to validate the url you feed it. On the other hand,
-    it automatically supports the full API--so why should you care?
-    """
-    def __init__(self, *args, **kwargs):
-        props = ConnectionProperties(
-            api_url='api.github.com',
-            secure_http=True,
-            extra_headers={
-                'accept': 'application/vnd.github.v3+json'
-            }
-        )
-        self.setClient(Client(*args, **kwargs))
-        self.setConnectionProperties(props)
-
-
 class IncompleteRequest(object):
-    """IncompleteRequests are partially-built HTTP requests.
+    """
+    IncompleteRequests are partially-built HTTP requests.
     They can be built via an HTTP-idiomatic notation,
     or via "normal" method calls.
 
@@ -107,12 +69,13 @@ class IncompleteRequest(object):
     >>> IncompleteRequest(client).client.METHOD('path/to/resource', ...)
     where METHOD is replaced by get, post, head, etc.
 
-    Also, if you use an invalid path, too bad. Just be ready to catch a
-    bad status from github.com. (Or maybe an httplib.error...)
+    Also, if you use an invalid path, too bad. Just be ready to handle a
+    bad status code from the upstream API. (Or maybe an
+    httplib.error...)
 
     You can use item access instead of attribute access. This is
     convenient for using variables\' values and is required for numbers.
-    >>> Github('user','pass').whatever[1][x][y].post()
+    >>> GitHub('user','pass').whatever[1][x][y].post()
 
     To understand the method(...) calls, check out github.client.Client.
     """
@@ -122,11 +85,12 @@ class IncompleteRequest(object):
 
     def __getattr__(self, key):
         if key in self.client.http_methods:
-            mfun = getattr(self.client, key)
-            fun = partial(mfun, url=self.url)
-            return update_wrapper(fun, mfun)
-        self.url += '/' + str(key)
-        return self
+            htmlMethod = getattr(self.client, key)
+            wrapper = partial(htmlMethod, url=self.url)
+            return update_wrapper(wrapper, htmlMethod)
+        else:
+            self.url += '/' + str(key)
+            return self
 
     __getitem__ = __getattr__
 
@@ -158,39 +122,23 @@ class Client(object):
         if connection_properties is not None:
             self.setConnectionProperties(connection_properties)
 
-        # Set up authentication
-        self.auth_header = None
-        if token is not None:
-            if password is not None:
-                raise TypeError(
-                    "You cannot use both password and oauth token "
-                    "authenication"
-                )
-            self.auth_header = 'Token %s' % token
-        elif username is not None:
-            if password is None:
-                raise TypeError(
-                    "You need a password to authenticate as " + username
-                )
-            self.username = username
-            self.auth_header = self.hash_pass(password)
-
-    def setConnectionProperties(self, props):
+    def setConnectionProperties(self, prop):
         """
         Initialize the connection properties. This must be called
         (either by passing connection_properties=... to __init__ or
         directly) before any request can be sent.
         """
-        if type(props) is not ConnectionProperties:
+        if type(prop) is not ConnectionProperties:
             raise TypeError(
                 "Client.setConnectionProperties: "
                 "Expected ConnectionProperties object"
             )
 
-        self.prop = props
-        if self.prop.extra_headers is not None:
+        if prop.extra_headers is not None:
+            prop.filterEmptyHeaders()
             self.default_headers = _default_headers.copy()
-            self.default_headers.update(self.prop.extra_headers)
+            self.default_headers.update(prop.extra_headers)
+        self.prop = prop
 
         # Enforce case restrictions on self.default_headers
         tmp_dict = {}
@@ -212,19 +160,15 @@ class Client(object):
         headers = headers or {}
         url += self.urlencode(params)
         if 'content-type' not in headers:
-            # We're doing a json.dumps of body, so let's set the
-            # content-type to json
             headers['content-type'] = 'application/json'
-        return self.request('POST', url, json.dumps(body), headers)
+        return self.request('POST', url, body, headers)
 
     def put(self, url, body=None, headers=None, **params):
         headers = headers or {}
         url += self.urlencode(params)
         if 'content-type' not in headers:
-            # We're doing a json.dumps of body, so let's set the
-            # content-type to json
             headers['content-type'] = 'application/json'
-        return self.request('PUT', url, json.dumps(body), headers)
+        return self.request('PUT', url, body, headers)
 
     def delete(self, url, headers=None, **params):
         headers = headers or {}
@@ -240,25 +184,30 @@ class Client(object):
         headers = headers or {}
         url += self.urlencode(params)
         if 'content-type' not in headers:
-            # We're doing a json.dumps of body, so let's set the
-            # content-type to json
             headers['content-type'] = 'application/json'
-        return self.request('PATCH', url, json.dumps(body), headers)
+        return self.request('PATCH', url, body, headers)
 
-    def request(self, method, url, body, headers):
-        """Low-level networking. All HTTP-method methods call this"""
+    def request(self, method, url, bodyData, headers):
+        """
+        Low-level networking. All HTTP-method methods call this
+        """
 
         headers = self._fix_headers(headers)
+        url = self.prop.constructUrl(url)
 
-        if self.auth_header:
-            headers['authorization'] = self.auth_header
+        if bodyData is None:
+            # Sending a content-type w/o the body might break some
+            # servers. Maybe?
+            if 'content-type' in headers:
+                del headers['content-type']
 
         # TODO: Context manager
+        requestBody = RequestBody(bodyData, headers)
         conn = self.get_connection()
-        conn.request(method, url, body, headers)
+        conn.request(method, url, requestBody.process(), headers)
         response = conn.getresponse()
         status = response.status
-        content = Content(response)
+        content = ResponseBody(response)
         self.headers = response.getheaders()
 
         conn.close()
@@ -282,51 +231,80 @@ class Client(object):
             return ''
         return '?%s' % urlencode(params)
 
-    def hash_pass(self, password):
-        auth_str = ('%s:%s' % (self.username, password)).encode('utf-8')
-        return 'Basic '.encode('utf-8') + base64.b64encode(auth_str).strip()
-
     def get_connection(self):
         if self.prop.secure_http:
             conn = HTTPSConnection(self.prop.api_url)
-        elif self.auth_header is None:
+        elif self.prop.extra_headers is None \
+                or 'authorization' not in self.prop.extra_headers:
             conn = HTTPConnection(self.prop.api_url)
         else:
             raise ConnectionError(
-                'Refusing to authenticate over non-secure (HTTP) connection.'
+                'Refusing to send the authorization header over an '
+                'insecure connection.'
             )
 
         return conn
 
 
-class Content(object):
+class Body(object):
+    """
+    Superclass for ResponseBody and RequestBody
+    """
+    def parseContentType(self, ctype):
+        """
+        Parse the Content-Type header, returning the media-type and any
+        parameters
+        """
+        if ctype is None:
+            self.mediatype = 'application/octet-stream'
+            self.ctypeParameters = {'charset': 'ISO-8859-1'}
+            return
+
+        params = ctype.split(';')
+        self.mediatype = params.pop(0).strip()
+
+        # Parse parameters
+        if len(params) > 0:
+            params = map(lambda s: s.strip().split('='), params)
+            paramDict = {}
+            for attribute, value in params:
+                # TODO: Find out if specifying an attribute multiple
+                # times is even okay, and how it should be handled
+                attribute = attribute.lower()
+                if attribute in paramDict:
+                    if type(paramDict[attribute]) is not list:
+                        # Convert singleton value to value-list
+                        paramDict[attribute] = [paramDict[attribute]]
+                    # Insert new value along with pre-existing ones
+                    paramDict[attribute] += value
+                else:
+                    # Insert singleton attribute value
+                    paramDict[attribute] = value
+            self.ctypeParameters = paramDict
+        else:
+            self.ctypeParameters = {}
+
+        if 'charset' not in self.ctypeParameters:
+            self.ctypeParameters['charset'] = 'ISO-8859-1'
+            # NB: INO-8859-1 is specified (RFC 2068) as the default
+            # charset in case none is provided
+
+    def mangled_mtype(self):
+        """
+        Mangle the media type into a suitable function name
+        """
+        return self.mediatype.replace('-', '_').replace('/', '_')
+
+
+class ResponseBody(Body):
     """
     Decode a response from the server, respecting the Content-Type field
     """
     def __init__(self, response):
         self.response = response
         self.body = response.read()
-        self.mediatype, self.encoding = self.get_ctype()
-
-    def get_ctype(self):
-        """Split the content-type field into mediatype and charset"""
-        ctype = self.response.getheader('Content-Type')
-
-        end = 0
-        try:
-            end = ctype.index(';')
-            mediatype = ctype[:end]
-        except:
-            mediatype = 'x-application/unknown'
-
-        try:
-            start = 8 + ctype.index('charset=', end)
-            end = ctype.index(';', start)
-            charset = ctype[start:end].rstrip()
-        except:
-            charset = 'ISO-8859-1'  # TODO
-
-        return mediatype, charset
+        self.parseContentType(self.response.getheader('Content-Type'))
+        self.encoding = self.ctypeParameters['charset']
 
     def decode_body(self):
         """
@@ -341,22 +319,22 @@ class Content(object):
         form based on the media-type (mime-type)
         """
         handlerName = self.mangled_mtype()
-        handler = getattr(self, handlerName, self.x_application_unknown)
+        handler = getattr(self, handlerName, self.application_octect_stream)
         return handler()
 
-    def mangled_mtype(self):
-        """
-        Mangle the media type into a suitable function name
-        """
-        return self.mediatype.replace('-', '_').replace('/', '_')
-
     # media-type handlers
-    def x_application_unknown(self):
-        """Handler for unknown media-types"""
+
+    def application_octect_stream(self):
+        """
+        Handler for unknown media-types. It does absolutely no
+        pre-processing of the response body, so it cannot mess it up
+        """
         return self.body
 
     def application_json(self):
-        """Handler for application/json media-type"""
+        """
+        Handler for application/json media-type
+        """
         self.decode_body()
 
         try:
@@ -372,8 +350,57 @@ class Content(object):
     # Insert new media-type handlers here
 
 
+class RequestBody(Body):
+    """
+    Encode a request body from the client, respecting the Content-Type
+    field
+    """
+    def __init__(self, body, headers):
+        self.body = body
+        self.headers = headers
+        self.parseContentType(self.headers.get('content-type', None))
+        self.encoding = self.ctypeParameters['charset']
+
+    def encodeBody(self):
+        """
+        Encode (and overwrite) self.body via the charset encoding
+        specified in the request headers. This should be called by the
+        media-type handler when appropriate
+        """
+        self.body = self.body.encode(self.encoding)
+
+    def process(self):
+        """
+        Process the request body by applying a media-type specific
+        handler to it.
+        """
+        if self.body is None:
+            return None
+
+        handlerName = self.mangled_mtype()
+        handler = getattr(self, handlerName, self.application_octet_stream)
+        return handler()
+
+    # media-type handlers
+
+    def application_octet_stream(self):
+        """
+        Handler for binary data and unknown media-types. Importantly,
+        it does absolutely no pre-processing of the body, which means it
+        will not mess it up.
+        """
+        return self.body
+
+    def application_json(self):
+        self.body = json.dumps(self.body)
+        self.encodeBody()
+        return self.body
+
+    # Insert new Request media-type handlers here
+
+
 class ConnectionProperties(object):
-    __slots__ = ['api_url', 'secure_http', 'extra_headers']
+    __slots__ = ['api_url', 'url_prefix', 'secure_http', 'extra_headers']
 
     def __init__(self, **props):
         # Initialize attribute slots
@@ -386,3 +413,20 @@ class ConnectionProperties(object):
                 raise TypeError("Invalid connection property: " + str(key))
             else:
                 setattr(self, key, val)
+
+    def constructUrl(self, url):
+        if self.url_prefix is None:
+            return url
+        return self.url_prefix + url
+
+    def filterEmptyHeaders(self):
+        if self.extra_headers is not None:
+            self.extra_headers = self._filterEmptyHeaders(self.extra_headers)
+
+    def _filterEmptyHeaders(self, headers):
+        newHeaders = {}
+        for header in headers.keys():
+            if header is not None and header != "":
+                newHeaders[header] = headers[header]
+
+        return newHeaders
