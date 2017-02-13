@@ -31,7 +31,7 @@ class AppVeyor(API):
 
     That's all there is to it. (blah.post() should work, too.)
 
-    NOTE: It is up to you to spell things correctly. A AppVeyor object
+    NOTE: It is up to you to spell things correctly. An AppVeyor object
     doesn't even try to validate the url you feed it. On the other hand,
     it automatically supports the full API--so why should you care?
     """
