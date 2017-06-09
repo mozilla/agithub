@@ -173,12 +173,16 @@ Here's how `agithub` works, under the hood:
 2. The Python method also receives `name=value` arguments, which it
    interprets as follows:
 
-##### `header=`
+##### `headers=`
 
 You can include custom headers as a dictionary supplied to the
 `headers=` argument. Some headers are provided by default (such as
 User-Agent). If these occur in the supplied dictionary, the default
 value will be overridden.
+
+   ```python
+   headers = {'Accept': 'application/vnd.github.loki-preview+json'}
+   ```
 
 
 ##### `body=`
