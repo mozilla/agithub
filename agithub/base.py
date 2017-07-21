@@ -380,8 +380,9 @@ class RequestBody(Body):
 
     # Insert new Request media-type handlers here
 
+
 class ConnectionProperties(object):
-    __slots__ = ['api_url', 'url_prefix', 'secure_http', 'extra_headers']
+    __slots__ = ['api_url', 'url_prefix', 'url_postfix', 'secure_http', 'extra_headers']
 
     def __init__(self, **props):
         # Initialize attribute slots
@@ -396,9 +397,16 @@ class ConnectionProperties(object):
                 setattr(self, key, val)
 
     def constructUrl(self, url):
-        if self.url_prefix is None:
-            return url
-        return self.url_prefix + url
+        url_prefix = self.url_prefix if self.url_prefix is not None else ''
+        url_postfix = self.url_postfix if self.url_postfix is not None else ''
+
+        parameter_index = url.find('?')
+
+        if self.url_postfix is not None and parameter_index >= 0:
+            url, params = url.split('?')
+            url_postfix = '%s?%s' % (url_postfix, params)
+
+        return '%s%s%s' % (url_prefix, url, url_postfix)
 
     def filterEmptyHeaders(self):
         if self.extra_headers is not None:
