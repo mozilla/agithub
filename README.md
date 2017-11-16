@@ -5,6 +5,8 @@
 `agithub` is a REST API client with transparent syntax which facilitates
 rapid prototyping&nbsp;&mdash; on *any* REST API!
 
+> Have you enjoyed AGitHub? We're looking for someone to step up as project maintainer. Please see the [announcement](https://github.com/jpaugh/agithub/issues/35)
+
 Originally tailored to the GitHub REST API, AGitHub has grown up to
 support many other REST APIs:
 
