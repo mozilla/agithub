@@ -79,7 +79,7 @@ we plan to add support for other types as well
    ```
 
    ```python
-   >>> from agithub import GitHub
+   >>> from agithub.GitHub import GitHub
    >>> g = GitHub(token='token')
    ```
 
