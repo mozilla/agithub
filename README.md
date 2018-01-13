@@ -225,9 +225,9 @@ you.
 And if all else fails, you can strap in, and take 15 minutes to read and
 become an expert on the code. From there, anything's possible.
 
-[1]: https://github.com/jpaugh/agithub/blob/master/agithub.py#L105
-[2]: https://github.com/jpaugh/agithub/blob/master/agithub.py#L24
-[3]: https://github.com/jpaugh/agithub/blob/master/agithub.py#L255
+[1]: https://github.com/jpaugh/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L103-L110
+[2]: https://github.com/jpaugh/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L22-L28
+[3]: https://github.com/jpaugh/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L309-L332
 
 ## License
 Copyright 2012&ndash;2016 Jonathan Paugh and contributors
