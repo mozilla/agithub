@@ -4,15 +4,16 @@ About this Document
 This serves as both the change-log and TODO list for the project. It
 serves to clarify what is in an (anticipated) release, as well as to
 direct project momentum. If you find something in here you want to do,
-by all means, please do. 
+by all means, please do.
 
-At the top, you willll see project milestones (upcoming releases) and
+At the top, you will see project milestones (upcoming releases) and
 their associated TODOs. After that, you will see a release version
 history in reverse chronological order. (The latest release comes
 [first](#release).)
 
-Also note that the latest stable branch (the tip of [maint][maint]) is
-usually in an as-yet *unreleased* status. This avoids a proliferation of
+Also note that the latest stable branch (the tip of
+[maint][https://github.com/mozilla/agithub/tree/maint]) is usually in
+an as-yet *unreleased* status. This avoids a proliferation of
 single-commit patch-level version changes in the `maint` branch, whilst
 still providing access to the very latest bug-fixes
 
@@ -61,15 +62,15 @@ v3.0
 * Be consistently `camelCase` (Exception: the media-type converters in
   Content (e.g.  `application_json`) should stay the same.)
 
+Release
+=======
+
 v2.1
 ----
 * Support XML de-serialization. (pick from [next-xml])
 * Request body content-type serialization & charset encoding
 
-[next-xml]: https://github.com/jpaugh/agithub/commit/3d373435c8110612cad061e9a9b31a7a1abd752c
-
-Release
-=======
+[next-xml]: 3d373435c8110612cad061e9a9b31a7a1abd752c
 
 v2.0
 ----
@@ -84,7 +85,7 @@ v2.0
 v1.3
 ----
 A stable branch, with a lot of bug fixes! (Thanks to all who
-contributed!) 
+contributed!)
 
 * Feature: Unit tests (Uriel Corfa, Joachim Durchholz)
 * Grown-up Incomplete-request error message (Joachim Durchholz)
@@ -97,14 +98,14 @@ v1.2
 ----
 
 * Revamp the internals, adding extensibility and flexibility. Meanwhile,
-  the external API (i.e. via the Github class) is entirely unchanged
+  the external API (i.e. via the GitHub class) is entirely unchanged
 
 * New test-suite. It is ad-hoc and primitive, but effective
 
 * Generic support for other REST web services
 
     - New top-level class (API)
-    - Github is now a subclass of the API class, and is the model for
+    - GitHub is now a subclass of the API class, and is the model for
       creating new subclasses
     - Facebook and SalesForce subclasses created, allowing (basic)
       access to these web services
