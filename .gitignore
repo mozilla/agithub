@@ -1,12 +1,9 @@
 tags
 *.py[co]
-<<<<<<< HEAD
 .*
 MANIFEST
 dist/*
-=======
 agithub.egg-info/
 agithub.egg-info/
 build/
 dist/
->>>>>>> 285837c353eefb12723de23117b952f126a6ce92
