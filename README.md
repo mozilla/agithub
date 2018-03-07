@@ -5,6 +5,8 @@
 `agithub` is a REST API client with transparent syntax which facilitates
 rapid prototyping&nbsp;&mdash; on *any* REST API!
 
+> Have you enjoyed AGitHub? We're looking for someone to step up as project maintainer. Please see the [announcement](https://github.com/jpaugh/agithub/issues/35)
+
 Originally tailored to the GitHub REST API, AGitHub has grown up to
 support many other REST APIs:
 
@@ -77,7 +79,7 @@ we plan to add support for other types as well
    ```
 
    ```python
-   >>> from agithub import GitHub
+   >>> from agithub.GitHub import GitHub
    >>> g = GitHub(token='token')
    ```
 
@@ -173,12 +175,16 @@ Here's how `agithub` works, under the hood:
 2. The Python method also receives `name=value` arguments, which it
    interprets as follows:
 
-##### `header=`
+##### `headers=`
 
 You can include custom headers as a dictionary supplied to the
 `headers=` argument. Some headers are provided by default (such as
 User-Agent). If these occur in the supplied dictionary, the default
 value will be overridden.
+
+   ```python
+   headers = {'Accept': 'application/vnd.github.loki-preview+json'}
+   ```
 
 
 ##### `body=`
@@ -219,9 +225,9 @@ you.
 And if all else fails, you can strap in, and take 15 minutes to read and
 become an expert on the code. From there, anything's possible.
 
-[1]: https://github.com/jpaugh/agithub/blob/master/agithub.py#L105
-[2]: https://github.com/jpaugh/agithub/blob/master/agithub.py#L24
-[3]: https://github.com/jpaugh/agithub/blob/master/agithub.py#L255
+[1]: https://github.com/jpaugh/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L103-L110
+[2]: https://github.com/jpaugh/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L22-L28
+[3]: https://github.com/jpaugh/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L309-L332
 
 ## License
 Copyright 2012&ndash;2016 Jonathan Paugh and contributors
