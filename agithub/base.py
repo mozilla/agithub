@@ -430,3 +430,19 @@ class ConnectionProperties(object):
                 newHeaders[header] = headers[header]
 
         return newHeaders
+
+class connectionManager(object):
+    '''
+    Context manager for handling connections in client.request
+    '''
+    def __init__(self, client):
+        self.conn = client.get_connection()
+
+    def __enter__(self):
+        return self.conn
+    
+    def __exit__(self, exc_type, exc_value, traceback): 
+        self.conn.close()
+
+
+
