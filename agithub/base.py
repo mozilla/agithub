@@ -131,9 +131,9 @@ class Client(object):
         if type(prop) is not ConnectionProperties:
             raise TypeError("Client.setConnectionProperties: Expected ConnectionProperties object")
 
+        self.default_headers = _default_headers.copy()
         if prop.extra_headers is not None:
             prop.filterEmptyHeaders()
-            self.default_headers = _default_headers.copy()
             self.default_headers.update(prop.extra_headers)
         self.prop = prop
 
