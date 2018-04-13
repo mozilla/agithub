@@ -5,6 +5,7 @@ import base64
 import re
 from functools import partial, update_wrapper
 
+import xml.dom.minidom
 
 import sys
 if sys.version_info[0:2] > (3,0):
@@ -322,6 +323,22 @@ class ResponseBody(Body):
     text_javascript = application_json
     # XXX: This isn't technically correct, but we'll hope for the best.
     # Patches welcome!
+
+    def application_xml(self):
+        self.decode_body()
+
+        try:
+            pybody = xml.dom.minidom.parseString(self.body)
+        except Exception: #TODO: What kind of exceptions?
+            pybody = self.body
+
+        return pybody
+
+
+    text_xml = application_xml
+    # The difference between text/xml and application/xml is whether it
+    # is human-readable or not. For our purposes, there is no
+    # difference. RFC 3023, L270.
 
     # Insert new Response media-type handlers here
 
