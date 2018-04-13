@@ -292,7 +292,7 @@ class ResponseBody(Body):
 
     def processBody(self):
         '''
-        Retrieve the body of the response, encoding it into a usuable
+        Retrieve the body of the response, encoding it into a usable
         form based on the media-type (mime-type)
         '''
         handlerName = self.mangled_mtype()
@@ -323,7 +323,7 @@ class ResponseBody(Body):
     # XXX: This isn't technically correct, but we'll hope for the best.
     # Patches welcome!
 
-    # Insert new media-type handlers here
+    # Insert new Response media-type handlers here
 
 class RequestBody(Body):
     '''
