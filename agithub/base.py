@@ -213,9 +213,28 @@ class Client(object):
                 headers[k] = v
         return headers
 
-    def urlencode(self, params):
-        if not params:
-            return ''
+    def urlencode(self, userParams):
+        '''
+        URL Encode the parameters for the request
+
+        If the api specifies default parameters, these can be overridden
+        explicitly; or, they can be disabled by setting param=None on a
+        given request
+        '''
+        if self.prop.default_url_parameters is None:
+            if userParams is None:
+                return ''
+            else:
+                params = userParams
+        else:
+            params = self.prop.default_url_parameters.copy();
+            for k,v in userParams.items():
+                params[k] = v
+
+            # user can pass None to un-set a default param for one
+            # request
+            params = dict((k, v) for k, v in params.items() if v is not None)
+
         return '?' + urllib.parse.urlencode(params)
 
     def get_connection(self):
@@ -381,7 +400,9 @@ class RequestBody(Body):
     # Insert new Request media-type handlers here
 
 class ConnectionProperties(object):
-    __slots__ = ['api_url', 'url_prefix', 'secure_http', 'extra_headers']
+    __slots__ = [
+            'api_url', 'url_prefix', 'secure_http', 'extra_headers'
+            , 'default_url_parameters' ]
 
     def __init__(self, **props):
         # Initialize attribute slots
