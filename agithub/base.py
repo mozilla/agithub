@@ -169,7 +169,7 @@ class Client(object):
     def patch(self, url, body=None, headers={}, **params):
         """
         Do a http patch request on the given url with given body, headers and parameters
-        Parameters is a dictionary that will will be urlencoded
+        Parameters is a dictionary that will will be url-encoded
         """
         url += self.urlencode(params)
         if not 'content-type' in headers:

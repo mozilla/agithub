@@ -46,7 +46,7 @@ class GitHub(API):
     def generateAuthHeader(self, username=None, password=None, token=None):
         if token is not None:
             if password is not None:
-                raise TypeError("You cannot use both password and oauth token authenication")
+                raise TypeError("You cannot use both password and OAuth token authentication")
             return 'Token %s' % token
         elif username is not None:
             if password is None:
