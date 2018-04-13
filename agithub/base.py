@@ -136,12 +136,6 @@ class Client(object):
             self.default_headers.update(prop.extra_headers)
         self.prop = prop
 
-        # Enforce case restrictions on self.default_headers
-        tmp_dict = {}
-        for k,v in self.default_headers.items():
-            tmp_dict[k.lower()] = v
-        self.default_headers = tmp_dict
-
     def head(self, url, headers={}, **params):
         url += self.urlencode(params)
         return self.request('HEAD', url, None, headers)
@@ -210,7 +204,7 @@ class Client(object):
         # Add default headers (if unspecified)
         for k,v in self.default_headers.items():
             if k not in headers:
-                headers[k] = v
+                headers[k.lower()] = v
         return headers
 
     def urlencode(self, params):
