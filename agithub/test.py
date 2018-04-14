@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright 2012-2016 Jonathan Paugh and contributors
 # See COPYING for license details
 from __future__ import print_function
@@ -12,6 +13,7 @@ Pass = 'Pass'
 Fail = 'Fail'
 Skip = 'Skip'
 
+
 class Test(object):
     _the_label = 'test'
     _the_testno = 0
@@ -24,7 +26,7 @@ class Test(object):
         print(self.tests)
 
     def doTestsFor(self, api):
-        '''Run all tests over the given API session'''
+        """Run all tests over the given API session"""
         results = []
         for name, test in self.tests.items():
             self._the_label = name
@@ -33,26 +35,33 @@ class Test(object):
         fails = skips = passes = 0
         for res in results:
             if res == Pass:
-                passes +=1
+                passes += 1
             elif res == Fail:
-                fails +=1
+                fails += 1
             elif res == Skip:
-                skips +=1
+                skips += 1
             else:
                 raise ValueError('Bad test result ' + (res))
 
         print(
-                '\n'
-                ' Results\n'
-                '--------------------------------------\n'
-                'Tests Run:     ', len(results), '\n'
-                '      Passed:  ', passes, '\n'
-                '      Failed:  ', fails, '\n'
-                '      Skipped: ', skips
-            )
+            '\n'
+            ' Results\n'
+            '--------------------------------------\n'
+            'Tests Run:     ',
+            len(results),
+            '\n'
+            '      Passed:  ',
+            passes,
+            '\n'
+            '      Failed:  ',
+            fails,
+            '\n'
+            '      Skipped: ',
+            skips
+        )
 
     def runTest(self, test, api):
-        '''Run a single test with the given API session'''
+        """Run a single test with the given API session"""
         self._the_testno += 1
         (stat, _) = test(api)
 
@@ -61,7 +70,7 @@ class Test(object):
         if stat in [Pass, Fail, Skip]:
             return stat
         elif stat < 400:
-            result =  Pass
+            result = Pass
         elif stat >= 500:
             result = Skip
         else:
@@ -71,16 +80,16 @@ class Test(object):
         return result
 
     def setlabel(self, lbl):
-        '''Set the global field _the_label, which is used by runTest'''
+        """Set the global field _the_label, which is used by runTest"""
         self._the_label += ' ' + lbl
 
     def label(self, result):
-        '''Print out a test label showing the result'''
+        """Print out a test label showing the result"""
         print (result + ':', self._the_testno, self._the_label)
 
     def haveAuth(self, api):
         username = getattr(api.client, 'username', NotImplemented)
-        if username == NotImplemented or username == None:
+        if username == NotImplemented or username is None:
             return False
         else:
             return True
@@ -111,9 +120,11 @@ class Basic (Test):
 # Utility
 ###
 
+
 # Session initializers
 def initAnonymousSession(klass):
     return klass()
+
 
 def initAuthenticatedSession(klass, **kwargs):
     for k in kwargs:
@@ -125,7 +136,7 @@ def initAuthenticatedSession(klass, **kwargs):
 
 # UI
 def yesno(ans):
-    '''Convert user input (Yes or No) to a boolean'''
+    """Convert user input (Yes or No) to a boolean"""
     ans = ans.lower()
     if ans == 'y' or ans == 'yes':
         return True
@@ -142,17 +153,18 @@ if __name__ == '__main__':
     authSession = None
 
     ans = input(
-            'Some of the tests require an authenticated session.'
-            ' Do you want to provide a username and password [y/N]? '
-            )
+        'Some of the tests require an authenticated session. '
+        'Do you want to provide a username and password [y/N]? '
+    )
 
     if yesno(ans):
         username = input('Username: ')
-        password = input ('Password (plain text): ')
+        password = input('Password (plain text): ')
         authSession = initAuthenticatedSession(
-                  GitHub
-                , username=username, password=password
-                )
+            GitHub,
+            username=username,
+            password=password,
+        )
 
     tests = filter(lambda var: var.startswith('test_'), globals().copy())
     tester = Basic()

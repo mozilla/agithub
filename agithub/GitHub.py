@@ -1,9 +1,12 @@
 # Copyright 2012-2016 Jonathan Paugh and contributors
 # See COPYING for license details
-from agithub.base import *
+import base64
+
+from agithub.base import API, ConnectionProperties, Client
+
 
 class GitHub(API):
-    '''
+    """
     The agnostic GitHub API. It doesn't know, and you don't care.
     >>> from agithub import GitHub
     >>> g = GitHub('user', 'pass')
@@ -28,17 +31,18 @@ class GitHub(API):
     NOTE: It is up to you to spell things correctly. A GitHub object
     doesn't even try to validate the url you feed it. On the other hand,
     it automatically supports the full API--so why should you care?
-    '''
-    def __init__(self, username=None, password=None, token=None, *args, **kwargs):
-        extraHeaders = {'accept' : 'application/vnd.github.v3+json'}
+    """
+    def __init__(self, username=None, password=None, token=None,
+                 *args, **kwargs):
+        extraHeaders = {'accept': 'application/vnd.github.v3+json'}
         auth = self.generateAuthHeader(username, password, token)
-        if auth != None:
+        if auth is not None:
             extraHeaders['authorization'] = auth
         props = ConnectionProperties(
-                    api_url = kwargs.pop('api_url', 'api.github.com'),
-                    secure_http = True,
-                    extra_headers = extraHeaders
-                    )
+            api_url=kwargs.pop('api_url', 'api.github.com'),
+            secure_http=True,
+            extra_headers=extraHeaders
+        )
 
         self.setClient(Client(*args, **kwargs))
         self.setConnectionProperties(props)
@@ -46,11 +50,16 @@ class GitHub(API):
     def generateAuthHeader(self, username=None, password=None, token=None):
         if token is not None:
             if password is not None:
-                raise TypeError("You cannot use both password and oauth token authenication")
+                raise TypeError(
+                    "You cannot use both password and oauth token "
+                    "authenication"
+                )
             return 'Token %s' % token
         elif username is not None:
             if password is None:
-                raise TypeError("You need a password to authenticate as " + username)
+                raise TypeError(
+                    "You need a password to authenticate as " + username
+                )
             self.username = username
             return self.hash_pass(password)
 

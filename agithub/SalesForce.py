@@ -2,12 +2,15 @@
 # See COPYING for license details
 from agithub.base import API, ConnectionProperties, Client
 
+
 class SalesForce(API):
-    '''
+    """
     SalesForce.com REST API
 
     Example taken from
-    http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#CSHID=quickstart_code.htm|StartTopic=Content%2Fquickstart_code.htm|SkinName=webhelp
+    http://www.salesforce.com/us/developer/docs/api_rest/
+    index_Left.htm#CSHID=quickstart_code.htm|
+    StartTopic=Content%2Fquickstart_code.htm|SkinName=webhelp
 
     >>> from SalesForce import SalesForce
     >>> sf = SalesForce()
@@ -29,11 +32,11 @@ class SalesForce(API):
 
     NB: XML is not automically decoded or de-serialized. Patch the
     ResponseBody class to fix this.
-    '''
+    """
     def __init__(self, *args, **kwargs):
         props = ConnectionProperties(
-                      api_url = 'na1.salesforce.com'
-                    , secure_http = True
-                    )
+            api_url='na1.salesforce.com',
+            secure_http=True,
+        )
         self.setClient(Client(*args, **kwargs))
         self.setConnectionProperties(props)
