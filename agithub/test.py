@@ -44,21 +44,14 @@ class Test(object):
                 raise ValueError('Bad test result ' + (res))
 
         print(
-            '\n'
-            ' Results\n'
-            '--------------------------------------\n'
-            'Tests Run:     ',
-            len(results),
-            '\n'
-            '      Passed:  ',
-            passes,
-            '\n'
-            '      Failed:  ',
-            fails,
-            '\n'
-            '      Skipped: ',
-            skips
-        )
+                '\n'
+                ' Results\n'
+                '--------------------------------------\n'
+                'Tests Run:     ', len(results), '\n'
+                '      Passed:  ', passes, '\n'
+                '      Failed:  ', fails, '\n'
+                '      Skipped: ', skips
+            )
 
     def runTest(self, test, api):
         """Run a single test with the given API session"""

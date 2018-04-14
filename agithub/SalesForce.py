@@ -8,9 +8,7 @@ class SalesForce(API):
     SalesForce.com REST API
 
     Example taken from
-    http://www.salesforce.com/us/developer/docs/api_rest/
-    index_Left.htm#CSHID=quickstart_code.htm|
-    StartTopic=Content%2Fquickstart_code.htm|SkinName=webhelp
+    http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#CSHID=quickstart_code.htm|StartTopic=Content%2Fquickstart_code.htm|SkinName=webhelp
 
     >>> from SalesForce import SalesForce
     >>> sf = SalesForce()
