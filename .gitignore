@@ -1,5 +1,8 @@
 tags
 *.py[co]
+.*
+MANIFEST
+dist/*
 agithub.egg-info/
 agithub.egg-info/
 build/
