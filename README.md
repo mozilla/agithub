@@ -28,14 +28,14 @@ This works because AGithub knows everything it needs to about protocol
 # Use
 
 The most striking quality of AGitHub is how closely its syntax emulates
-HTTP. In fact, you might find it even more convenient that HTTP, and
+HTTP. In fact, you might find it even more convenient than HTTP, and
 almost as general (as far as REST APIs go, anyway). The examples below
-tend to use the GitHub API as a refence point, but it is no less easy to
+tend to use the GitHub API as a reference point, but it is no less easy to
 use `agithub` with, say, the Facebook Graph.
 
 ## Get
 
-Here's how to do a `GET` request, with proprely-encoded url parameters:
+Here's how to do a `GET` request, with properly-encoded url parameters:
 
 ```python
 client.issues.get(filter='subscribed')
