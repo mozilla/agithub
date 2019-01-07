@@ -3,7 +3,7 @@
 > It doesn't know, and you don't care!
 
 `agithub` is a REST API client with transparent syntax which facilitates
-rapid prototyping&nbsp;&mdash; on *any* REST API!
+rapid prototyping &mdash; on *any* REST API!
 
 Originally tailored to the GitHub REST API, AGitHub has grown up to
 support many other REST APIs:
@@ -21,7 +21,7 @@ about 30 lines of code.
 This works because AGithub knows everything it needs to about protocol
 (REST, HTTP, TCP), but assumes nothing about your upstream API.
 
-[GitHub client]: https://github.com/jpaugh/agithub/blob/master/agithub/GitHub.py
+[GitHub client]: agithub/GitHub.py
 
 # Use
 
@@ -50,10 +50,10 @@ GET /issues/?filter=subscribed
 Here's how to send a request body along with your request:
 
 ```python
-client.video.upload.post(body=someObject, tags="social devcon")
+client.video.upload.post(body=some_object, tags="social devcon")
 ```
 
-This will send the following request, with `someObject` serialized as
+This will send the following request, with `some_object` serialized as
 the request body:<sup>*</sup>
 
 ```http
@@ -62,7 +62,7 @@ POST /video/upload?tags=social+devcon
 <serialized request body>
 ```
 
-<sup>*</sup>&nbsp;For now, the request body is limited to JSON data; but
+<sup>*</sup> For now, the request body is limited to JSON data; but
 we plan to add support for other types as well
 
 
@@ -106,9 +106,9 @@ we plan to add support for other types as well
    behaves exactly the same.
 
    ```python
-   >>> g.repos.jpaugh.repla.issues[1].get()
+   >>> g.repos.octocat.linguist.issues[1].get()
    (200, { 'id': '#blah', ... })
-   >>> mylogin, myrepo = 'jpaugh', 'braille-converter'
+   >>> mylogin, myrepo = 'octocat', 'Spoon-Knife'
    >>> g.repos[mylogin][myrepo].milestones.get(state='open', sort='completeness')
    (200, [ list, of, milestones ])
    ```
@@ -126,7 +126,7 @@ we plan to add support for other types as well
    You are following octocat
    ```
 
-   You may find this useful&nbsp;&mdash; or not.
+   You may find this useful &mdash; or not.
 
 6. Finally, `agithub` knows nothing at all about the GitHub API, and it
    won't second-guess you.
@@ -169,34 +169,25 @@ Here's how `agithub` works, under the hood:
 1. It translates a sequence of attribute look-ups into a URL; The
    Python method you call at the end of the chain determines the
    HTTP method to use for the request.
-
 2. The Python method also receives `name=value` arguments, which it
    interprets as follows:
-
-##### `headers=`
-
-You can include custom headers as a dictionary supplied to the
-`headers=` argument. Some headers are provided by default (such as
-User-Agent). If these occur in the supplied dictionary, the default
-value will be overridden.
-
-   ```python
-   headers = {'Accept': 'application/vnd.github.loki-preview+json'}
-   ```
-
-
-##### `body=`
-
-If you're using `POST`, `PUT`, or `PATCH` (`post()`, `put()`, and
-`patch()`), then you should include the body as the `body=` argument.
-The body is serialized to JSON before sending it out on the wire.
-
-##### GET Parameters
-
-Any other arguments to the Python method become GET parameters, and are
-tacked onto the end of the URL. They are, of course, url-encoded for
-you.
-
+   * `headers=`
+     * You can include custom headers as a dictionary supplied to the
+     `headers=` argument. Some headers are provided by default (such as
+     User-Agent). If these occur in the supplied dictionary, the default
+     value will be overridden.
+ 
+       ```python
+       headers = {'Accept': 'application/vnd.github.loki-preview+json'}
+       ```
+   * `body=`
+     * If you're using `POST`, `PUT`, or `PATCH` (`post()`, `put()`, and
+     `patch()`), then you should include the body as the `body=` argument.
+     The body is serialized to JSON before sending it out on the wire.
+   * GET Parameters
+     * Any other arguments to the Python method become GET parameters, and are
+     tacked onto the end of the URL. They are, of course, url-encoded for
+     you.
 3. When the response is received, `agithub` looks at its content
    type to determine how to handle it, possibly decoding it from the
    given char-set to Python's Unicode representation, then converting to
@@ -217,17 +208,17 @@ you.
   inserting a new method into the [`ResponseBody` class][3], replacing
   `'-'` and `'/'` with `'_'` in the name. That method will then be
   responsible for converting the response body to a usable
-  form&nbsp;&mdash; and for calling `decode_body` to do char-set
+  form &mdash; and for calling `decode_body` to do char-set
   conversion, if required.
 
 And if all else fails, you can strap in, and take 15 minutes to read and
 become an expert on the code. From there, anything's possible.
 
-[1]: https://github.com/jpaugh/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L103-L110
-[2]: https://github.com/jpaugh/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L22-L28
-[3]: https://github.com/jpaugh/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L309-L332
+[1]: https://github.com/mozilla/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L103-L110
+[2]: https://github.com/mozilla/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L22-L28
+[3]: https://github.com/mozilla/agithub/blob/b47661df9e62224a69216a2f11dbe574990349d2/agithub/base.py#L309-L332
 
 ## License
 Copyright 2012&ndash;2016 Jonathan Paugh and contributors
 See [COPYING][LIC] for license details
-[LIC]: https://github.com/jpaugh/agithub/blob/master/COPYING
+[LIC]: COPYING
