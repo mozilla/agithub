@@ -3,6 +3,8 @@
 import json
 from functools import partial, update_wrapper
 
+import xml.dom.minidom
+
 import sys
 if sys.version_info[0:2] > (3, 0):
     from http.client import HTTPConnection, HTTPSConnection
@@ -134,17 +136,11 @@ class Client(object):
                 "Expected ConnectionProperties object"
             )
 
+        self.default_headers = _default_headers.copy()
         if prop.extra_headers is not None:
             prop.filterEmptyHeaders()
-            self.default_headers = _default_headers.copy()
             self.default_headers.update(prop.extra_headers)
         self.prop = prop
-
-        # Enforce case restrictions on self.default_headers
-        tmp_dict = {}
-        for k, v in self.default_headers.items():
-            tmp_dict[k.lower()] = v
-        self.default_headers = tmp_dict
 
     def head(self, url, headers=None, **params):
         headers = headers or {}
@@ -223,7 +219,7 @@ class Client(object):
         # Add default headers (if unspecified)
         for k, v in self.default_headers.items():
             if k not in headers:
-                headers[k] = v
+                headers[k.lower()] = v
         return headers
 
     def urlencode(self, params):
@@ -315,7 +311,7 @@ class ResponseBody(Body):
 
     def processBody(self):
         """
-        Retrieve the body of the response, encoding it into a usuable
+        Retrieve the body of the response, encoding it into a usable
         form based on the media-type (mime-type)
         """
         handlerName = self.mangled_mtype()
@@ -347,8 +343,24 @@ class ResponseBody(Body):
     text_javascript = application_json
     # XXX: This isn't technically correct, but we'll hope for the best.
     # Patches welcome!
-    # Insert new media-type handlers here
 
+    def application_xml(self):
+        self.decode_body()
+
+        try:
+            pybody = xml.dom.minidom.parseString(self.body)
+        except Exception: #TODO: What kind of exceptions?
+            pybody = self.body
+
+        return pybody
+
+
+    text_xml = application_xml
+    # The difference between text/xml and application/xml is whether it
+    # is human-readable or not. For our purposes, there is no
+    # difference. RFC 3023, L270.
+
+    # Insert new Response media-type handlers here
 
 class RequestBody(Body):
     """

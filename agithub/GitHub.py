@@ -53,8 +53,8 @@ class GitHub(API):
         if token is not None:
             if password is not None:
                 raise TypeError(
-                    "You cannot use both password and oauth token "
-                    "authenication"
+                    "You cannot use both password and OAuth token "
+                    "authentication"
                 )
             return 'Token %s' % token
         elif username is not None:

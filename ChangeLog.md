@@ -24,6 +24,23 @@ Upcoming
 Unscheduled
 -----------
 
+
+* Support reusing TCP connections, and "pipelining" of requests, a la
+  RFC 2068, Sect 8.1, L2377
+
+    - The user must ask for pipelining, and supply a callback function
+      to be called after a response is received.
+    - Rename Client.request() -> Client.addRequest() (or such)
+    - Have Client.addRequest() check whether a persistent connection is
+      wanted, and save the entire request in a Client.pendingRequests
+      list in that case
+    - Create a new Client.sendRequests() method which the user may call
+      to send all requests up the pipeline. (It should work even if the
+      server does not support pipelining)
+    - Call the user-supplied callback whenever a request is received.
+      There are some concurrency issues here, and we may elect to call
+      the callback only after *all* requests are received.
+
 * Create a script to pack the basic module and any given set of
   service-specific classes as one file. I still like the idea that a
   given API (e.g. Facebook) could be packed into a single file, and
@@ -81,6 +98,10 @@ v2.0
 * Bugfixes:
     - Use `application/octet-stream` for unknown media type
     - Spell 'GitHub' correctly
+
+* Parse Content-Type header correctly; make a dict of the
+  parameters (Content.ctypeParameters) available to the media-type
+  handlers
 
 v1.3
 ----
