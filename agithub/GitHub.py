@@ -35,7 +35,7 @@ class GitHub(API):
     it automatically supports the full API--so why should you care?
     """
     def __init__(self, username=None, password=None, token=None,
-                 paginate=False, *args, **kwargs):
+                 *args, **kwargs):
         extraHeaders = {'accept': 'application/vnd.github.v3+json'}
         auth = self.generateAuthHeader(username, password, token)
         if auth is not None:
@@ -46,7 +46,7 @@ class GitHub(API):
             extra_headers=extraHeaders
         )
 
-        self.setClient(GitHubClient(paginate=paginate, *args, **kwargs))
+        self.setClient(GitHubClient(*args, **kwargs))
         self.setConnectionProperties(props)
 
     def generateAuthHeader(self, username=None, password=None, token=None):
