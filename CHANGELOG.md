@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2019-01-16
+### Added
+* GitHub pagination support, which can be enabled
+* GitHub rate limiting support, enabled by default
+
+### Changed
+* Changelog format changed to keepachangelog
+
 ## [2.1] - 2018-04-13
 
 * Support XML de-serialization. (pick from [next-xml])
