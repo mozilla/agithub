@@ -4,6 +4,5 @@ tags
 MANIFEST
 dist/*
 agithub.egg-info/
-agithub.egg-info/
 build/
 dist/
