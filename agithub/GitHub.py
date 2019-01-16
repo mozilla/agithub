@@ -3,9 +3,11 @@
 import base64
 import time
 import re
+import logging
 
 from agithub.base import API, ConnectionProperties, Client, RequestBody, ResponseBody
 
+logger = logging.getLogger(__name__)
 
 class GitHub(API):
     """
@@ -69,11 +71,14 @@ class GitHub(API):
         auth_str = ('%s:%s' % (self.username, password)).encode('utf-8')
         return 'Basic '.encode('utf-8') + base64.b64encode(auth_str).strip()
 
+
 class GitHubClient(Client):
     def __init__(self, username=None, password=None, token=None,
-                 connection_properties=None, paginate=False):
+                 connection_properties=None, paginate=False,
+                 sleep_on_ratelimit=True):
         super(GitHubClient, self).__init__()
         self.paginate = paginate
+        self.sleep_on_ratelimit = sleep_on_ratelimit
 
     def request(self, method, url, bodyData, headers):
         """Low-level networking. All HTTP-method methods call this"""
@@ -90,8 +95,8 @@ class GitHubClient(Client):
         #TODO: Context manager
         requestBody = RequestBody(bodyData, headers)
 
-        if self.no_ratelimit_remaining():
-            time.sleep(self.ratelimit_seconds_remaining())
+        if self.sleep_on_ratelimit and self.no_ratelimit_remaining():
+            self.sleep_until_more_ratelimit()
 
         while True:
             conn = self.get_connection()
@@ -102,30 +107,59 @@ class GitHubClient(Client):
             self.headers = response.getheaders()
 
             conn.close()
-            if status == '403' and self.no_ratelimit_remaining():
-                time.sleep(self.ratelimit_seconds_remaining())
+            if status == 403 and self.sleep_on_ratelimit and self.no_ratelimit_remaining():
+                self.sleep_until_more_ratelimit()
             else:
                 data = content.processBody()
                 if self.paginate and type(data) == list:
-                    data.extend(self.get_additional_pages())
+                    data.extend(self.get_additional_pages(method, bodyData, headers))
                 return status, data
 
-    def get_additional_pages(self):
+    def get_additional_pages(self, method, bodyData, headers):
         data = []
         url = self.get_next_link_url()
-        if url:
-            status, data = self.get(url)
-            data.extend(self.get_additional_pages())
-        return data
+        if not url:
+            return data
+        logger.debug(
+            'Fetching an additional paginated GitHub response page at '
+            '{}'.format(url))
+
+        status, data = self.request(method, url, bodyData, headers)
+        if type(data) == list:
+            data.extend(self.get_additional_pages(method, bodyData, headers))
+            return data
+        elif (status == 403 and self.no_ratelimit_remaining()
+              and not self.sleep_on_ratelimit):
+            raise TypeError(
+                'While fetching paginated GitHub response pages, the GitHub '
+                'ratelimit was reached but sleep_on_ratelimit is disabled. '
+                'Either enable sleep_on_ratelimit or disable paginate.')
+        else:
+            raise TypeError(
+                'While fetching a paginated GitHub response page, a non-list '
+                'was returned with status {}: {}'.format(status, data))
 
     def no_ratelimit_remaining(self):
         headers = dict(self.headers if self.headers is not None else [])
-        return int(headers.get('X-RateLimit-Remaining', 1)) == 0
+        ratelimit_remaining = int(
+            headers.get('X-RateLimit-Remaining'.lower(), 1))
+        return ratelimit_remaining == 0
 
     def ratelimit_seconds_remaining(self):
         ratelimit_reset = int(dict(self.headers).get(
-            'X-RateLimit-Reset', 0))
-        return max(0, ratelimit_reset - time.time())
+            'X-RateLimit-Reset'.lower(), 0))
+        return max(0, int(ratelimit_reset - time.time()) + 1)
+
+    def sleep_until_more_ratelimit(self):
+        logger.debug(
+            'No GitHub ratelimit remaining. Sleeping for {} seconds until {} '
+            'before trying API call again.'.format(
+                self.ratelimit_seconds_remaining(),
+                time.strftime(
+                    "%H:%M:%S", time.localtime(
+                        time.time() + self.ratelimit_seconds_remaining()))
+            ))
+        time.sleep(self.ratelimit_seconds_remaining())
 
     def get_next_link_url(self):
         """Given a set of HTTP headers find the RFC 5988 Link header field,
