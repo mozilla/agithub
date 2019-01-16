@@ -14,19 +14,19 @@ class GitHub(API):
     >>> g = GitHub('user', 'pass')
     >>> status, data = g.issues.get(filter='subscribed')
     >>> data
-    ... [ list_, of, stuff ]
+    [ list_, of, stuff ]
 
     >>> status, data = g.repos.jpaugh.repla.issues[1].get()
     >>> data
-    ... { 'dict': 'my issue data', }
+    { 'dict': 'my issue data', }
 
     >>> name, repo = 'jpaugh', 'repla'
     >>> status, data = g.repos[name][repo].issues[1].get()
-    ... same thing
+    same thing
 
     >>> status, data = g.funny.I.donna.remember.that.one.get()
     >>> status
-    ... 404
+    404
 
     That's all there is to it. (blah.post() should work, too.)
 
@@ -76,7 +76,7 @@ class GitHubClient(Client):
         self.paginate = paginate
 
     def request(self, method, url, bodyData, headers):
-        '''Low-level networking. All HTTP-method methods call this'''
+        """Low-level networking. All HTTP-method methods call this"""
 
         headers = self._fix_headers(headers)
         url = self.prop.constructUrl(url)
@@ -128,10 +128,11 @@ class GitHubClient(Client):
         return max(0, ratelimit_reset - time.time())
 
     def get_next_link_url(self):
-        '''Given a set of HTTP headers find the RFC 5988 Link header field,
-        determine if it contains a relation type indicating a next resource and if
-        so return the URL of the next resource, otherwise return an empty string.
-        '''
+        """Given a set of HTTP headers find the RFC 5988 Link header field,
+        determine if it contains a relation type indicating a next resource and
+        if so return the URL of the next resource, otherwise return an empty
+        string."""
+
         # From https://github.com/requests/requests/blob/master/requests/utils.py
         for value in [x[1] for x in self.headers if x[0].lower() == 'link']:
             replace_chars = ' \'"'
