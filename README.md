@@ -58,7 +58,7 @@ Here's how to send a request body along with your request:
 
 ```python
 some_object = {'foo': 'bar'}
-client.video.upload.post(body=some_object, tags="social devcon")
+client.video.upload.post(bodyData=some_object, tags="social devcon")
 ```
 
 This will send the following request, with `some_object` serialized as
@@ -99,7 +99,7 @@ print(data['items'][0])
 ### `body`
 
 If you're using `POST`, `PUT`, or `PATCH` (`post()`, `put()`, or `patch()`), 
-then you should include the body as the `body=` argument. The body is 
+then you should include the body as the `bodyData=` argument. The body is 
 serialized to JSON before sending it out on the wire.
 
 ```python
@@ -109,7 +109,7 @@ g = GitHub()
 # requirement for this specific markdown.raw API endpoint
 headers={'Content-Type': 'text/plain'}  
 body = '# This should be my header'
-status, data = g.markdown.raw.post(body=body, headers=headers)
+status, data = g.markdown.raw.post(bodyData=body, headers=headers)
 print(data)
 ```
 
@@ -374,9 +374,9 @@ Here's how `agithub` works, under the hood:
        ```python
        headers = {'Accept': 'application/vnd.github.loki-preview+json'}
        ```
-   * `body=`
+   * `bodyData=`
      * If you're using `POST`, `PUT`, or `PATCH` (`post()`, `put()`, and
-     `patch()`), then you should include the body as the `body=` argument.
+     `patch()`), then you should include the body as the `bodyData=` argument.
      The body is serialized to JSON before sending it out on the wire.
    * GET Parameters
      * Any other arguments to the Python method become GET parameters, and are

@@ -156,26 +156,26 @@ class Client(object):
         url += self.urlencode(params)
         return self.request('GET', url, None, headers)
 
-    def post(self, url, body=None, headers=None, **params):
+    def post(self, url, bodyData=None, headers=None, **params):
         headers = headers or {}
         url += self.urlencode(params)
         if 'content-type' not in headers:
             headers['content-type'] = 'application/json'
-        return self.request('POST', url, body, headers)
+        return self.request('POST', url, bodyData, headers)
 
-    def put(self, url, body=None, headers=None, **params):
+    def put(self, url, bodyData=None, headers=None, **params):
         headers = headers or {}
         url += self.urlencode(params)
         if 'content-type' not in headers:
             headers['content-type'] = 'application/json'
-        return self.request('PUT', url, body, headers)
+        return self.request('PUT', url, bodyData, headers)
 
     def delete(self, url, headers=None, **params):
         headers = headers or {}
         url += self.urlencode(params)
         return self.request('DELETE', url, None, headers)
 
-    def patch(self, url, body=None, headers=None, **params):
+    def patch(self, url, bodyData=None, headers=None, **params):
         """
         Do a http patch request on the given url with given body,
         headers and parameters.
@@ -185,7 +185,7 @@ class Client(object):
         url += self.urlencode(params)
         if 'content-type' not in headers:
             headers['content-type'] = 'application/json'
-        return self.request('PATCH', url, body, headers)
+        return self.request('PATCH', url, bodyData, headers)
 
     def request(self, method, url, bodyData, headers):
         """
