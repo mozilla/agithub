@@ -142,12 +142,12 @@ class GitHubClient(Client):
     def no_ratelimit_remaining(self):
         headers = dict(self.headers if self.headers is not None else [])
         ratelimit_remaining = int(
-            headers.get('X-RateLimit-Remaining'.lower(), 1))
+            headers.get('X-RateLimit-Remaining', 1))
         return ratelimit_remaining == 0
 
     def ratelimit_seconds_remaining(self):
         ratelimit_reset = int(dict(self.headers).get(
-            'X-RateLimit-Reset'.lower(), 0))
+            'X-RateLimit-Reset', 0))
         return max(0, int(ratelimit_reset - time.time()) + 1)
 
     def sleep_until_more_ratelimit(self):
