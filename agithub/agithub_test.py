@@ -88,5 +88,17 @@ class TestIncompleteRequest(unittest.TestCase):
         )
 
 
+def test_github():
+    g = GitHub()
+    status, data = g.users.octocat.get()
+    assert data.get('name') == 'The Octocat'
+    assert status == 200
+    # Workaround to https://github.com/mozilla/agithub/issues/67
+    response_headers = dict([(x.lower(), y) for x, y in g.getheaders()])
+    assert (
+            response_headers.get('Content-Type'.lower()) ==
+            'application/json; charset=utf-8')
+
+
 if __name__ == '__main__':
     unittest.main()
