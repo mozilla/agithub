@@ -5,10 +5,13 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md')) as f:
     long_description = f.read()
 
-version = '2.2.0'
+test_requirements = ['pytest']
+
+extras = {
+    "test": test_requirements,
+}
 
 setup(name='agithub',
-      version=version,
       description="A lightweight, transparent syntax for REST clients",
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -29,4 +32,9 @@ setup(name='agithub',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
+      tests_require=test_requirements,
+      extras_require=extras,
+      setup_requires=['setuptools-scm'],
+      use_scm_version=True,
+      install_requires=['setuptools-scm'],
       )
