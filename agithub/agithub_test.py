@@ -3,8 +3,31 @@
 # See COPYING for license details
 from agithub.GitHub import GitHub
 from agithub.base import IncompleteRequest
-import mock
 import unittest
+
+
+class Client(object):
+    http_methods = ('demo', 'test')
+
+    def __init__(self, username=None, password=None, token=None,
+                 connection_properties=None):
+        pass
+
+    def setConnectionProperties(self, props):
+        pass
+
+    def demo(self, *args, **params):
+        return self.methodCalled('demo', *args, **params)
+
+    def test(self, *args, **params):
+        return self.methodCalled('test', *args, **params)
+
+    def methodCalled(self, methodName, *args, **params):
+        return {
+            'methodName': methodName,
+            'args': args,
+            'params': params
+        }
 
 
 class TestGitHubObjectCreation(unittest.TestCase):
@@ -30,7 +53,7 @@ class TestGitHubObjectCreation(unittest.TestCase):
 class TestIncompleteRequest(unittest.TestCase):
 
     def newIncompleteRequest(self):
-        return IncompleteRequest(mock.Client())
+        return IncompleteRequest(Client())
 
     def test_pathByGetAttr(self):
         rb = self.newIncompleteRequest()
@@ -63,6 +86,7 @@ class TestIncompleteRequest(unittest.TestCase):
                 "params": {"url": "/path"}
             }
         )
+
 
 if __name__ == '__main__':
     unittest.main()

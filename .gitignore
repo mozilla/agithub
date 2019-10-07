@@ -6,3 +6,4 @@ dist/*
 agithub.egg-info/
 build/
 dist/
+.tox
