@@ -427,5 +427,4 @@ become an expert on the code. From there, anything's possible.
 
 ## License
 Copyright 2012&ndash;2016 Jonathan Paugh and contributors
-See [COPYING][LIC] for license details
-[LIC]: COPYING
+See [COPYING](COPYING) for license details

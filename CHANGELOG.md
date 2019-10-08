@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.1] - 2019-10-07
+### Added
+* Mozilla code of conduct
+* Long description to setup.py containing README
+* End to end GitHub unit test and tox testing with pytest
+* Integration with Travis CI
+
+### Changed
+* Moved to SCM (git) driven version instead of a hard coded one
+* VERSION constant from semver list (e.g. [2, 2, 1]) to string version (e.g. 2.2.1)
+
+### Removed
+* mock module to avoid collision with builtin mock module
+* STR_VERSION constant
+
+### Fixed
+* TypeError when paginate is `True` and `sleep_on_ratelimit` is the default (#66 by [@huma23](https://github.com/huma23)) 
+
 ## [2.2.0] - 2019-01-16
 ### Added
 * GitHub pagination support, which can be enabled
@@ -71,7 +89,8 @@ contributed!)
 * Has a version number. (Yippie!)
 * First more-or-less stable version
 
-[Unreleased]: https://github.com/mozilla/agithub/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/mozilla/agithub/compare/v2.2.1...HEAD
+[2.2.1]: https://github.com/mozilla/agithub/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/mozilla/agithub/compare/v2.1...v2.2.0
 [2.1]: https://github.com/mozilla/agithub/compare/v2.0...v2.1
 [2.0]: https://github.com/mozilla/agithub/compare/v1.3...v2.0

@@ -5,9 +5,11 @@ import time
 import re
 import logging
 
-from agithub.base import API, ConnectionProperties, Client, RequestBody, ResponseBody
+from agithub.base import (
+    API, ConnectionProperties, Client, RequestBody, ResponseBody)
 
 logger = logging.getLogger(__name__)
+
 
 class GitHub(API):
     """
@@ -92,7 +94,7 @@ class GitHubClient(Client):
             if 'content-type' in headers:
                 del headers['content-type']
 
-        #TODO: Context manager
+        # TODO: Context manager
         requestBody = RequestBody(bodyData, headers)
 
         if self.sleep_on_ratelimit and self.no_ratelimit_remaining():
@@ -107,12 +109,14 @@ class GitHubClient(Client):
             self.headers = response.getheaders()
 
             conn.close()
-            if status == 403 and self.sleep_on_ratelimit and self.no_ratelimit_remaining():
+            if (status == 403 and self.sleep_on_ratelimit and
+                    self.no_ratelimit_remaining()):
                 self.sleep_until_more_ratelimit()
             else:
                 data = content.processBody()
                 if self.paginate and type(data) == list:
-                    data.extend(self.get_additional_pages(method, bodyData, headers))
+                    data.extend(
+                        self.get_additional_pages(method, bodyData, headers))
                 return status, data
 
     def get_additional_pages(self, method, bodyData, headers):
@@ -165,9 +169,10 @@ class GitHubClient(Client):
         """Given a set of HTTP headers find the RFC 5988 Link header field,
         determine if it contains a relation type indicating a next resource and
         if so return the URL of the next resource, otherwise return an empty
-        string."""
+        string.
 
-        # From https://github.com/requests/requests/blob/master/requests/utils.py
+        From https://github.com/requests/requests/blob/master/requests/utils.py
+        """
         for value in [x[1] for x in self.headers if x[0].lower() == 'link']:
             replace_chars = ' \'"'
             value = value.strip(replace_chars)
