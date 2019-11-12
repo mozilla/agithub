@@ -2,7 +2,6 @@
 # See COPYING for license details
 import json
 from functools import partial, update_wrapper
-from setuptools_scm import get_version
 
 import sys
 if sys.version_info[0:2] > (3, 0):
@@ -15,13 +14,14 @@ else:
     class ConnectionError(OSError):
         pass
 
-VERSION = get_version(root='..', relative_to=__file__)
+VERSION = [2, 2, 2]
+STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 
 # These headers are implicitly included in each request; however, each
 # can be explicitly overridden by the client code. (Used in Client
 # objects.)
 _default_headers = {
-    'user-agent': 'agithub/' + VERSION,
+    'user-agent': 'agithub/' + STR_VERSION,
     'content-type': 'application/json'
 }
 

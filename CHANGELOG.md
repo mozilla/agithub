@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.2] - 2019-10-07
+### Fixed
+* Reverted the move to using setuptools-scm as it's [not actually meant to be
+  used in the package code, only in setup.py](https://github.com/pypa/setuptools_scm/issues/354#issuecomment-519407730).
+  setuptools-scm was causing an `LookupError: setuptools-scm was unable to detect version` error
+
 ## [2.2.1] - 2019-10-07
 ### Added
 * Mozilla code of conduct
@@ -89,7 +95,8 @@ contributed!)
 * Has a version number. (Yippie!)
 * First more-or-less stable version
 
-[Unreleased]: https://github.com/mozilla/agithub/compare/v2.2.1...HEAD
+[Unreleased]: https://github.com/mozilla/agithub/compare/v2.2.2...HEAD
+[2.2.2]: https://github.com/mozilla/agithub/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/mozilla/agithub/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/mozilla/agithub/compare/v2.1...v2.2.0
 [2.1]: https://github.com/mozilla/agithub/compare/v2.0...v2.1
