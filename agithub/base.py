@@ -285,9 +285,13 @@ class Body(object):
             self.ctypeParameters = {}
 
         if 'charset' not in self.ctypeParameters:
-            self.ctypeParameters['charset'] = 'ISO-8859-1'
-            # NB: INO-8859-1 is specified (RFC 2068) as the default
-            # charset in case none is provided
+            if ctype == 'application/json':
+                self.ctypeParameters['charset'] = 'utf8'
+                # RFC 4627 says JSON text SHALL be encoded in Unicode. The default encoding is UTF-8.
+            else:
+                self.ctypeParameters['charset'] = 'ISO-8859-1'
+                # NB: INO-8859-1 is specified (RFC 2068) as the default
+                # charset in case none is provided
 
     def mangled_mtype(self):
         """
