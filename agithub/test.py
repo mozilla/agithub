@@ -78,7 +78,7 @@ class Test(object):
 
     def label(self, result):
         """Print out a test label showing the result"""
-        print (result + ':', self._the_testno, self._the_label)
+        print(result + ':', self._the_testno, self._the_label)
 
     def haveAuth(self, api):
         username = getattr(api.client, 'username', NotImplemented)
