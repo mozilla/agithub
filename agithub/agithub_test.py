@@ -57,8 +57,8 @@ class TestIncompleteRequest(unittest.TestCase):
 
     def test_pathByGetAttr(self):
         rb = self.newIncompleteRequest()
-        rb.hug.an.octocat
-        self.assertEqual(rb.url, "/hug/an/octocat")
+        test = rb.hug.an.octocat
+        self.assertEqual(test.url, "/hug/an/octocat")
 
     def test_callMethodDemo(self):
         rb = self.newIncompleteRequest()
@@ -73,8 +73,8 @@ class TestIncompleteRequest(unittest.TestCase):
 
     def test_pathByGetItem(self):
         rb = self.newIncompleteRequest()
-        rb["hug"][1]["octocat"]
-        self.assertEqual(rb.url, "/hug/1/octocat")
+        test = rb["hug"][1]["octocat"]
+        self.assertEqual(test.url, "/hug/1/octocat")
 
     def test_callMethodTest(self):
         rb = self.newIncompleteRequest()
