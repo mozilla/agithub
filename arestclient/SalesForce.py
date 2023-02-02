@@ -1,6 +1,6 @@
 # Copyright 2012-2016 Jonathan Paugh and contributors
 # See COPYING for license details
-from agithub.base import API, ConnectionProperties, Client
+from arestclient.base import API, ConnectionProperties, Client
 
 
 class SalesForce(API):

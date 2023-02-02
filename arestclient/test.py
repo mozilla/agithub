@@ -2,7 +2,7 @@
 # Copyright 2012-2016 Jonathan Paugh and contributors
 # See COPYING for license details
 from __future__ import print_function
-from agithub.GitHub import GitHub
+from arestclient.GitHub import GitHub
 
 ##
 # Test harness
