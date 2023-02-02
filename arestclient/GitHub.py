@@ -86,7 +86,7 @@ class GitHubClient(Client):
         """Low-level networking. All HTTP-method methods call this"""
 
         headers = self._fix_headers(headers)
-        url = self.prop.constructUrl(url)
+        url = self.prop.construct_url(url)
 
         if bodyData is None:
             # Sending a content-type w/o the body might break some
