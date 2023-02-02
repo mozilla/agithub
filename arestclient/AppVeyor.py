@@ -4,13 +4,13 @@
 # AppVeyor REST API: https://www.appveyor.com/docs/api/
 # Version 1.0 (2017-02-13) by topic2k@atlogger.de
 
-from agithub.base import API, ConnectionProperties, Client
+from arestclient.base import API, ConnectionProperties, Client
 
 
 class AppVeyor(API):
     """
     The agnostic AppVeyor API. It doesn't know, and you don't care.
-    >>> from agithub.AppVeyor import AppVeyor
+    >>> from arestclient.AppVeyor import AppVeyor
     >>> ci = AppVeyor('<your AppVeyor API token>')
     >>> status, data = ci.api.projects.get()
     >>> data

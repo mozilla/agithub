@@ -2,7 +2,7 @@
 
 > It doesn't know, and you don't care!
 
-`agithub` is a REST API client with transparent syntax which facilitates
+`arestclient` is a REST API client with transparent syntax which facilitates
 rapid prototyping &mdash; on *any* REST API!
 
 Originally tailored to the GitHub REST API, AGitHub has grown up to

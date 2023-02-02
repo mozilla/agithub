@@ -21,7 +21,7 @@ STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
 # can be explicitly overridden by the client code. (Used in Client
 # objects.)
 _default_headers = {
-    'user-agent': 'agithub/' + STR_VERSION,
+    'user-agent': 'arestclient/' + STR_VERSION,
     'content-type': 'application/json'
 }
 

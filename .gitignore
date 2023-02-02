@@ -2,7 +2,7 @@ tags
 *.py[co]
 MANIFEST
 dist/*
-agithub.egg-info/
+arestclient.egg-info/
 build/
 dist/
 .tox

@@ -5,7 +5,7 @@ import time
 import re
 import logging
 
-from agithub.base import (
+from arestclient.base import (
     API, ConnectionProperties, Client, RequestBody, ResponseBody)
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class GitHub(API):
     """
     The agnostic GitHub API. It doesn't know, and you don't care.
-    >>> from agithub.GitHub import GitHub
+    >>> from arestclient.GitHub import GitHub
     >>> g = GitHub('user', 'pass')
     >>> status, data = g.issues.get(filter='subscribed')
     >>> data

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # Copyright 2012-2016 Jonathan Paugh and contributors
 # See COPYING for license details
-from agithub.GitHub import GitHub
-from agithub.base import IncompleteRequest
+from arestclient.GitHub import GitHub
+from arestclient.base import IncompleteRequest
 import unittest
 
 

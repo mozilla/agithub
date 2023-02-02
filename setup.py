@@ -7,7 +7,7 @@ with open(path.join(here, 'README.md')) as f:
 
 version = '2.2.2'
 
-setup(name='agithub',
+setup(name='arestclient',
       version=version,
       description="A lightweight, transparent syntax for REST clients",
       long_description=long_description,
@@ -24,7 +24,7 @@ setup(name='agithub',
       keywords=['api', 'REST', 'GitHub', 'Facebook', 'SalesForce'],
       author='Jonathan Paugh',
       author_email='jpaugh@gmx.us',
-      url='https://github.com/mozilla/agithub',
+      url='https://github.com/michaeldorner/arestclient',
       license='MIT',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
