@@ -3,16 +3,9 @@
 import json
 from functools import partial, update_wrapper
 
-import sys
-if sys.version_info[0:2] > (3, 0):
-    from http.client import HTTPConnection, HTTPSConnection
-    from urllib.parse import urlencode
-else:
-    from httplib import HTTPConnection, HTTPSConnection
-    from urllib import urlencode
+from http.client import HTTPConnection, HTTPSConnection
+from urllib.parse import urlencode
 
-    class ConnectionError(OSError):
-        pass
 
 VERSION = [2, 2, 2]
 STR_VERSION = 'v' + '.'.join(str(v) for v in VERSION)
@@ -120,9 +113,9 @@ class Client(object):
 
         # Set up connection properties
         if connection_properties is not None:
-            self.setConnectionProperties(connection_properties)
+            self.set_connection_properties(connection_properties)
 
-    def setConnectionProperties(self, prop):
+    def set_connection_properties(self, prop):
         """
         Initialize the connection properties. This must be called
         (either by passing connection_properties=... to __init__ or
@@ -135,7 +128,7 @@ class Client(object):
             )
 
         if prop.extra_headers is not None:
-            prop.filterEmptyHeaders()
+            prop.filter_empty_headers()
             self.default_headers = _default_headers.copy()
             self.default_headers.update(prop.extra_headers)
         self.prop = prop
@@ -193,7 +186,7 @@ class Client(object):
         """
 
         headers = self._fix_headers(headers)
-        url = self.prop.constructUrl(url)
+        url = self.prop.construct_url(url)
 
         if bodyData is None:
             # Sending a content-type w/o the body might break some
@@ -202,9 +195,9 @@ class Client(object):
                 del headers['content-type']
 
         # TODO: Context manager
-        requestBody = RequestBody(bodyData, headers)
+        request_body = RequestBody(bodyData, headers)
         conn = self.get_connection()
-        conn.request(method, url, requestBody.process(), headers)
+        conn.request(method, url, request_body.process(), headers)
         response = conn.getresponse()
         status = response.status
         content = ResponseBody(response)
@@ -250,14 +243,14 @@ class Body(object):
     """
     Superclass for ResponseBody and RequestBody
     """
-    def parseContentType(self, ctype):
+    def parse_content_type(self, ctype):
         """
         Parse the Content-Type header, returning the media-type and any
         parameters
         """
         if ctype is None:
             self.mediatype = 'application/octet-stream'
-            self.ctypeParameters = {'charset': 'ISO-8859-1'}
+            self.ctype_parameters = {'charset': 'ISO-8859-1'}
             return
 
         params = ctype.split(';')
@@ -266,26 +259,26 @@ class Body(object):
         # Parse parameters
         if len(params) > 0:
             params = map(lambda s: s.strip().split('='), params)
-            paramDict = {}
+            param_dict = {}
             for attribute, value in params:
                 # TODO: Find out if specifying an attribute multiple
                 # times is even okay, and how it should be handled
                 attribute = attribute.lower()
-                if attribute in paramDict:
-                    if type(paramDict[attribute]) is not list:
+                if attribute in param_dict:
+                    if type(param_dict[attribute]) is not list:
                         # Convert singleton value to value-list
-                        paramDict[attribute] = [paramDict[attribute]]
+                        param_dict[attribute] = [param_dict[attribute]]
                     # Insert new value along with pre-existing ones
-                    paramDict[attribute] += value
+                    param_dict[attribute] += value
                 else:
                     # Insert singleton attribute value
-                    paramDict[attribute] = value
-            self.ctypeParameters = paramDict
+                    param_dict[attribute] = value
+            self.ctype_parameters = param_dict
         else:
-            self.ctypeParameters = {}
+            self.ctype_parameters = {}
 
-        if 'charset' not in self.ctypeParameters:
-            self.ctypeParameters['charset'] = 'ISO-8859-1'
+        if 'charset' not in self.ctype_parameters:
+            self.ctype_parameters['charset'] = 'ISO-8859-1'
             # NB: INO-8859-1 is specified (RFC 2068) as the default
             # charset in case none is provided
 
@@ -303,8 +296,8 @@ class ResponseBody(Body):
     def __init__(self, response):
         self.response = response
         self.body = response.read()
-        self.parseContentType(self.response.getheader('Content-Type'))
-        self.encoding = self.ctypeParameters['charset']
+        self.parse_content_type(self.response.getheader('Content-Type'))
+        self.encoding = self.ctype_parameters['charset']
 
     def decode_body(self):
         """
@@ -344,7 +337,7 @@ class ResponseBody(Body):
 
         return pybody
 
-    text_javascript = application_json
+    # text_javascript = application_json
     # XXX: This isn't technically correct, but we'll hope for the best.
     # Patches welcome!
     # Insert new media-type handlers here
@@ -358,10 +351,10 @@ class RequestBody(Body):
     def __init__(self, body, headers):
         self.body = body
         self.headers = headers
-        self.parseContentType(self.headers.get('content-type', None))
-        self.encoding = self.ctypeParameters['charset']
+        self.parse_content_type(self.headers.get('content-type', None))
+        self.encoding = self.ctype_parameters['charset']
 
-    def encodeBody(self):
+    def encode_body(self):
         """
         Encode (and overwrite) self.body via the charset encoding
         specified in the request headers. This should be called by the
@@ -393,7 +386,7 @@ class RequestBody(Body):
 
     def application_json(self):
         self.body = json.dumps(self.body)
-        self.encodeBody()
+        self.encode_body()
         return self.body
 
     # Insert new Request media-type handlers here
@@ -414,19 +407,19 @@ class ConnectionProperties(object):
             else:
                 setattr(self, key, val)
 
-    def constructUrl(self, url):
+    def construct_url(self, url):
         if self.url_prefix is None:
             return url
         return self.url_prefix + url
 
-    def filterEmptyHeaders(self):
+    def filter_empty_headers(self):
         if self.extra_headers is not None:
             self.extra_headers = self._filterEmptyHeaders(self.extra_headers)
 
     def _filterEmptyHeaders(self, headers):
-        newHeaders = {}
+        new_headers = {}
         for header in headers.keys():
             if header is not None and header != "":
-                newHeaders[header] = headers[header]
+                new_headers[header] = headers[header]
 
-        return newHeaders
+        return new_headers
