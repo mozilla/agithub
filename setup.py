@@ -7,11 +7,19 @@ with open(path.join(here, 'README.md')) as f:
 
 version = '2.2.2'
 
+test_requirements = ['pytest']
+
+extras = {
+    "test": test_requirements,
+}
+
 setup(name='agithub',
       version=version,
       description="A lightweight, transparent syntax for REST clients",
       long_description=long_description,
       long_description_content_type='text/markdown',
+      tests_require=test_requirements,
+      extras_require=extras,
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Environment :: Console',

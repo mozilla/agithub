@@ -79,9 +79,9 @@ class IncompleteRequest(object):
 
     To understand the method(...) calls, check out github.client.Client.
     """
-    def __init__(self, client):
+    def __init__(self, client, url=""):
         self.client = client
-        self.url = ''
+        self.url = url
 
     def __getattr__(self, key):
         if key in self.client.http_methods:
@@ -89,8 +89,8 @@ class IncompleteRequest(object):
             wrapper = partial(htmlMethod, url=self.url)
             return update_wrapper(wrapper, htmlMethod)
         else:
-            self.url += '/' + str(key)
-            return self
+            new_url = self.url + '/' + str(key)
+            return IncompleteRequest(self.client, new_url)
 
     __getitem__ = __getattr__
 
