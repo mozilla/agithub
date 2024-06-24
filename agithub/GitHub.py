@@ -114,7 +114,7 @@ class GitHubClient(Client):
                 self.sleep_until_more_ratelimit()
             else:
                 data = content.processBody()
-                if self.paginate and type(data) == list:
+                if self.paginate and type(data) is list:
                     data.extend(
                         self.get_additional_pages(method, bodyData, headers))
                 return status, data
@@ -129,7 +129,7 @@ class GitHubClient(Client):
             '{}'.format(url))
 
         status, data = self.request(method, url, bodyData, headers)
-        if type(data) == list:
+        if type(data) is list:
             data.extend(self.get_additional_pages(method, bodyData, headers))
             return data
         elif (status == 403 and self.no_ratelimit_remaining()
