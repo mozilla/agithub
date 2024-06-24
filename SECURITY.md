@@ -6,11 +6,7 @@ Security announcements will be recorded in the [CHANGELOG](CHANGELOG.md).
 
 ## Reporting a Vulnerability
 
-To report a security vulnerability, email
-agithub-security-vulnerability-report-2021@mozilla.com
-
-The members of this security vulnerability report mailing list can be configured
-by Mozilla [here](https://groups.google.com/a/mozilla.com/g/agithub-security-vulnerability-report-2021).
+To report a security vulnerability use the [GitHub Reporting a Security Vulnerability](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability) process on the [security tab](https://github.com/mozilla/agithub/security)
 
 ## Supported Versions
 
